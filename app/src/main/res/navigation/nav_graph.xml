@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@layout/alarm_list_fragment">
+    <fragment
+        android:id="@+id/alarm_list"
+        android:name="com.fndt.alarm.view.AlarmListFragment"
+        tools:layout="@layout/alarm_list_fragment" />
+</navigation>
