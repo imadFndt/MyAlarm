@@ -1,13 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColorOut">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/alarm_list"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:itemCount="3"
-        tools:listitem="@layout/alarm_item" />
+        android:layout_height="75dp"
+        app:layout_constraintBottom_toTopOf="@id/list_container"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/alarm_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/marginBasic"
+            android:text="@string/app_name"
+            android:textColor="@color/alarmTimeTextColor"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_button"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="@dimen/marginBasic"
+            android:backgroundTint="@color/backgroundColorOff"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            android:shadowColor="@android:color/white"
+            app:icon="@drawable/ic_baseline_add_24"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="24dp"
+            app:iconTint="@color/addAlarmButtonPlusColor"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/list_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:backgroundTint="@color/backgroundColorOff"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_bar">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/alarm_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/list_border"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:itemCount="3"
+            tools:listitem="@layout/alarm_item" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

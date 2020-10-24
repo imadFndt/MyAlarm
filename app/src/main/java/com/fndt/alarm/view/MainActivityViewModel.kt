@@ -1,28 +1,33 @@
 package com.fndt.alarm.view
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.fndt.alarm.model.AlarmControl
+import androidx.lifecycle.*
 import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.model.AlarmRepository
+import kotlinx.coroutines.launch
 
-class MainActivityViewModel(control: AlarmControl) : ViewModel() {
+class MainActivityViewModel(private val repository: AlarmRepository) : ViewModel() {
     val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
+    private val repositoryObserver = Observer<List<AlarmItem>> { alarmListData.postValue(it) }
 
     init {
-        //TODO OBSERVE TO MODEL
+        repository.alarmList.observeForever(repositoryObserver)
+    }
+
+    fun addItem(item: AlarmItem) {
+        viewModelScope.launch { repository.addItem(item) }
     }
 
     override fun onCleared() {
-        //TODO CLEAR OBSERVERS
+        if (repository.alarmList.hasObservers()) {
+            repository.alarmList.removeObserver(repositoryObserver)
+        }
         super.onCleared()
     }
 
-    class Factory(private val control: AlarmControl) : ViewModelProvider.Factory {
+    class Factory(private val repository: AlarmRepository) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MainActivityViewModel(control) as T
+            return MainActivityViewModel(repository) as T
         }
     }
 }
