@@ -13,7 +13,7 @@ import com.fndt.alarm.model.AlarmItem.Companion.toTimeString
 import com.fndt.alarm.view.MainActivity
 import java.util.*
 
-class NotificationIntentReceiver : BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver() {
     companion object {
         const val NOTIFICATION_CODE = 2
         private const val CHANNEL_NAME = "mainChannel"
@@ -58,14 +58,16 @@ class NotificationIntentReceiver : BroadcastReceiver() {
         //TODO CALLNEXT
     }
 
-    private fun setNotification(context: Context, alarmItem: AlarmItem) {
+    private fun setAlarm(context: Context, alarmItem: AlarmItem) {
         val cal = Calendar.getInstance()
-        val intent = Intent(context, NotificationIntentReceiver::class.java).apply {
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
             val bundle = Bundle().apply { putSerializable(ALARM_EVENT, alarmItem) }
             putExtra(EVENT, bundle)
         }
         val sender =
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(
+                context, alarmItem.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+            )
         val am = (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
@@ -74,10 +76,12 @@ class NotificationIntentReceiver : BroadcastReceiver() {
         }
     }
 
-    fun cancelNotifications(context: Context) {
-        val intent = Intent(context, NotificationIntentReceiver::class.java)
+    fun cancelNotifications(context: Context, alarmItem: AlarmItem) {
+        val intent = Intent(context, AlarmReceiver::class.java)
         val sender =
-            PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(
+                context, alarmItem.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+            )
         val am = (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         am.cancel(sender)
     }

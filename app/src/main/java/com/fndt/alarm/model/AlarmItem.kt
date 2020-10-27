@@ -10,12 +10,13 @@ data class AlarmItem(
     var name: String,
     var isActive: Boolean
 ) : Serializable {
+    //TODO PARCELS
     init {
         if (time > 1439) throw Exception()
     }
 
     @PrimaryKey(autoGenerate = true)
-    var id: Long? = null
+    var id: Long = 0
 
     companion object {
         fun Long.toTimeString(): String {
