@@ -1,4 +1,4 @@
-package com.fndt.alarm.view
+package com.fndt.alarm.view.main
 
 import androidx.lifecycle.*
 import com.fndt.alarm.model.AlarmItem
@@ -8,12 +8,22 @@ import kotlinx.coroutines.launch
 class MainActivityViewModel(private val repository: AlarmRepository) : ViewModel() {
     val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     val status: LiveData<AlarmStatus> get() = statusData
+    val alarmRequest: LiveData<AlarmItem> get() = alarmRequestData
     private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
     private val statusData: MutableLiveData<AlarmStatus> = MutableLiveData(AlarmStatus.Idle)
+    private val alarmRequestData: MutableLiveData<AlarmItem> = MutableLiveData()
     private val repositoryObserver = Observer<List<AlarmItem>> { alarmListData.postValue(it) }
 
     init {
         repository.alarmList.observeForever(repositoryObserver)
+    }
+
+    fun setTurnAlarmRequest(item: AlarmItem) {
+        alarmRequestData.value = item
+    }
+
+    fun cancelAlarmRequest() {
+        alarmRequestData.value = null
     }
 
     fun addItem(item: AlarmItem) {
@@ -22,6 +32,10 @@ class MainActivityViewModel(private val repository: AlarmRepository) : ViewModel
     }
 
     fun updateItem(item: AlarmItem?) {
+        viewModelScope.launch { item?.let { repository.changeAlarm(it) } }
+    }
+
+    fun editItem(item: AlarmItem?) {
         statusData.value = AlarmStatus.EditStatus(item)
     }
 

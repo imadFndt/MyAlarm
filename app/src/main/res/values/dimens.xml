@@ -4,4 +4,5 @@
     <dimen name="switch_thumb_radius">15dp</dimen>
     <dimen name="switch_thumb_padding">2dp</dimen>
     <dimen name="marginBasic">15dp</dimen>
+    <dimen name="dialogHeight">165dp</dimen>
 </resources>

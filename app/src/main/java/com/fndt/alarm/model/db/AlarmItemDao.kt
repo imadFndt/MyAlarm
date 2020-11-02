@@ -15,6 +15,9 @@ interface AlarmItemDao {
     @Query("SELECT * FROM alarms ORDER BY time ASC")
     fun getAll(): LiveData<List<AlarmItem>>
 
+    @Query("SELECT * FROM alarms WHERE time > :time ORDER BY time ASC LIMIT 1")
+    fun getNext(time: Long): AlarmItem
+
     @Query("DELETE FROM alarms")
     fun wipeTable()
 }

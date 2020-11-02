@@ -8,9 +8,13 @@ import java.io.Serializable
 data class AlarmItem(
     var time: Long,
     var name: String,
-    var isActive: Boolean
+    var isActive: Boolean,
 ) : Serializable {
     //TODO PARCELS
+    var isSnoozed = false
+    var snoozeTime = 0L
+    var repeatPeriod = 0L
+
     init {
         if (time > 1439) throw Exception()
     }

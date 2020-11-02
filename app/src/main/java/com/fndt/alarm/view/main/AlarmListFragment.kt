@@ -1,4 +1,4 @@
-package com.fndt.alarm.view
+package com.fndt.alarm.view.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,17 +29,21 @@ class AlarmListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val listAdapter = AlarmListAdapter()
+        listAdapter.itemClickListener = { viewModel.editItem(it) }
+        listAdapter.itemSwitchClickListener = { item ->
+            viewModel.setTurnAlarmRequest(item)
+            item.isActive = !item.isActive
+            viewModel.updateItem(item)
+        }
         binding.alarmList.apply {
             val decor = DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
-                val divider =
-                    ContextCompat.getDrawable(requireContext(), R.drawable.alarm_list_divider)
-                divider?.let { setDrawable(it) }
+                ContextCompat.getDrawable(requireContext(), R.drawable.alarm_list_divider)
+                    ?.let { setDrawable(it) }
             }
             addItemDecoration(decor)
             adapter = listAdapter
         }
-
-        binding.addButton.setOnClickListener { viewModel.updateItem(null) }
+        binding.addButton.setOnClickListener { viewModel.editItem(null) }
         viewModel.alarmList.observe(viewLifecycleOwner) { listAdapter.updateItems(it) }
     }
 }

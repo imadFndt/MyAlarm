@@ -1,7 +1,6 @@
 package com.fndt.alarm.model.util
 
-import com.fndt.alarm.view.MainActivity
-import com.fndt.alarm.view.MainActivityViewModel
+import com.fndt.alarm.view.main.MainActivityViewModel
 import dagger.Component
 import javax.inject.Singleton
 

@@ -4,4 +4,7 @@
     <string name="repeat">Repeat</string>
     <string name="sound">Sound</string>
     <string name="description">Description</string>
+    <string name="choose_description">Choose description</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/marginBasic"
+        android:layout_marginTop="5dp"
+        android:text="@string/description"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/marginBasic"
+        android:layout_marginEnd="@dimen/marginBasic"
+        android:hint="@string/description"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:labelFor="@string/description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/description_done_button"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="@dimen/marginBasic"
+        android:layout_marginBottom="2dp"
+        android:text="@string/done"
+        android:textColor="@color/alarmTimeTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/description_cancel_button" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/description_cancel_button"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="@dimen/marginBasic"
+        android:layout_marginBottom="2dp"
+        android:text="@string/cancel"
+        android:textColor="@color/alarmTimeTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/description_done_button"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

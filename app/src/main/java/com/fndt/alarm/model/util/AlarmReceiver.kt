@@ -1,43 +1,42 @@
 package com.fndt.alarm.model.util
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
+import android.net.ConnectivityManager
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.getSystemService
 import com.fndt.alarm.R
 import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.AlarmItem.Companion.toTimeString
-import com.fndt.alarm.view.MainActivity
-import java.util.*
+import com.fndt.alarm.view.AlarmActivity
+import com.fndt.alarm.view.main.MainActivity
 
 class AlarmReceiver : BroadcastReceiver() {
-    companion object {
-        const val NOTIFICATION_CODE = 2
-        private const val CHANNEL_NAME = "mainChannel"
-        private const val EVENT = "eventName"
-        private const val ALARM_EVENT = "eventAlarm"
-        private var NOTIFICATION_ID = 0
-    }
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.e("RECEIVED", "EVENT")
         val name: CharSequence = "Notifier"
         val channel: NotificationChannel
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_HIGH
             channel = NotificationChannel(CHANNEL_NAME, name, importance)
+            channel.importance = NotificationManager.IMPORTANCE_HIGH
             channel.description = "Alarm channel"
             val notificationManager = context.getSystemService(NotificationManager::class.java)!!
             notificationManager.createNotificationChannel(channel)
         }
 
-        val bundle = intent.getBundleExtra(EVENT)
-        val event = bundle?.getSerializable(ALARM_EVENT) as AlarmItem?
+        val event = intent.getBundleExtra(EVENT)?.getSerializable(ALARM_EVENT) as AlarmItem
 
-        val builder = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        val builder = if (VERSION.SDK_INT >= VERSION_CODES.O) {
             Notification.Builder(context, CHANNEL_NAME)
         } else {
             Notification.Builder(context)
@@ -48,41 +47,33 @@ class AlarmReceiver : BroadcastReceiver() {
             context, NOTIFICATION_CODE, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val notificationCompat = builder.setContentTitle(event!!.name)
+        val notification = builder.setContentTitle(event.name)
             .setContentText(event.time.toTimeString())
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
+            .apply { setPriorityIfLowApi(Notification.PRIORITY_MAX) }
             .build()
         val managerCompat = NotificationManagerCompat.from(context)
-        managerCompat.notify(NOTIFICATION_ID++, notificationCompat)
-        //TODO CALLNEXT
+        //managerCompat.notify(NOTIFICATION_ID++, notification)
+        val connectivityManager: ConnectivityManager? = context.getSystemService()
+        //connectivityManager?.activi
+        context.startActivity(
+            Intent(context, AlarmActivity::class.java).apply {
+                putExtra(AlarmActivity.EXTRA_ITEM, event)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+        )
     }
 
-    private fun setAlarm(context: Context, alarmItem: AlarmItem) {
-        val cal = Calendar.getInstance()
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            val bundle = Bundle().apply { putSerializable(ALARM_EVENT, alarmItem) }
-            putExtra(EVENT, bundle)
-        }
-        val sender =
-            PendingIntent.getBroadcast(
-                context, alarmItem.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        val am = (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
-        } else {
-            am.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
-        }
+    private fun Notification.Builder.setPriorityIfLowApi(priority: Int) {
+        if (VERSION.SDK_INT < VERSION_CODES.O) setPriority(priority)
     }
 
-    fun cancelNotifications(context: Context, alarmItem: AlarmItem) {
-        val intent = Intent(context, AlarmReceiver::class.java)
-        val sender =
-            PendingIntent.getBroadcast(
-                context, alarmItem.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        val am = (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
-        am.cancel(sender)
+    companion object {
+        const val NOTIFICATION_CODE = 2
+        private const val CHANNEL_NAME = "mainChannel"
+        const val EVENT = "eventName"
+        const val ALARM_EVENT = "eventAlarm"
+        private var NOTIFICATION_ID = 0
     }
 }

@@ -33,6 +33,9 @@ class AlarmRepository @Inject constructor(
     suspend fun wipeData() =
         withContext(Dispatchers.IO) { alarmItemDao.wipeTable() }
 
+    suspend fun getNextAlarm(time: Long): AlarmItem =
+        withContext(Dispatchers.IO) { return@withContext alarmItemDao.getNext(time) }
+
     fun clear() {
         alarmItemDao.getAll().removeObserver(dbObserver)
     }
