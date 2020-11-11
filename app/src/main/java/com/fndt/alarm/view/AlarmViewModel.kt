@@ -1,11 +1,12 @@
 package com.fndt.alarm.view
 
+import android.content.Intent
 import androidx.lifecycle.*
+import com.fndt.alarm.model.AlarmControl
 import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmRepository
 import kotlinx.coroutines.launch
 
-class AlarmViewModel(private val repository: AlarmRepository) : ViewModel() {
+class AlarmViewModel(private val alarmControl: AlarmControl) : ViewModel() {
     val alarm: LiveData<AlarmItem> get() = alarmData
     private val alarmData: MutableLiveData<AlarmItem> = MutableLiveData()
 
@@ -15,13 +16,17 @@ class AlarmViewModel(private val repository: AlarmRepository) : ViewModel() {
 
     fun requestNextAlarm(time: Long) {
         viewModelScope.launch {
-            alarmData.postValue(repository.getNextAlarm(time))
+            // alarmData.postValue(repository.getNextAlarm(time))
         }
     }
 
-    class Factory(private val repository: AlarmRepository) : ViewModelProvider.Factory {
+    fun handleEvent(event: Intent) {
+        alarmControl.handleEventSync(event)
+    }
+
+    class Factory(private val control: AlarmControl) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return AlarmViewModel(repository) as T
+            return AlarmViewModel(control) as T
         }
     }
 }

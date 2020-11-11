@@ -1,6 +1,7 @@
 package com.fndt.alarm.view.main
 
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -15,6 +16,9 @@ import com.fndt.alarm.databinding.AddFragmentBinding
 import com.fndt.alarm.databinding.InputTextLayoutBinding
 import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.util.AlarmApplication
+import com.fndt.alarm.model.util.INTENT_ADD_ALARM
+import com.fndt.alarm.model.util.ITEM_EXTRA
+import com.fndt.alarm.model.util.REPEAT_NONE
 import java.util.*
 
 class EditFragment : Fragment() {
@@ -39,7 +43,7 @@ class EditFragment : Fragment() {
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
         time = (hour * 60 + minute).toLong()
-        currentItem = AlarmItem(time, "DefaultName", true)
+        currentItem = AlarmItem(time, "DefaultName", false, REPEAT_NONE, 1)
         binding.temporaryTimePicker.apply {
             setIs24HourView(true)
             setTime(hour, minute)
@@ -49,9 +53,15 @@ class EditFragment : Fragment() {
         }
         binding.descriptionValue.text = currentItem.name
         binding.doneButton.setOnClickListener {
-            currentItem.isActive = true
-            if (isChanging) viewModel.updateItem(currentItem) else viewModel.addItem(currentItem)
-            viewModel.setTurnAlarmRequest(currentItem)
+            val intent = Intent(INTENT_ADD_ALARM).apply {
+                putExtra(ITEM_EXTRA, currentItem)
+            }
+            if (isChanging) {
+                //viewModel.addAlarm(intent)
+            } else {
+                //viewModel.addAlarm(intent)
+                viewModel.setTurnAlarmRequest(currentItem)
+            }
         }
         binding.closeButton.setOnClickListener { viewModel.cancelItemUpdate() }
         binding.descriptionLayout.setOnClickListener { buildDescriptionDialog() }

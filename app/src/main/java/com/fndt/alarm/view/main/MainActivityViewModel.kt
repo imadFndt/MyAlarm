@@ -1,38 +1,37 @@
 package com.fndt.alarm.view.main
 
+import android.content.Intent
 import androidx.lifecycle.*
+import com.fndt.alarm.model.AlarmControl
 import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmRepository
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel(private val repository: AlarmRepository) : ViewModel() {
+class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
     val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     val status: LiveData<AlarmStatus> get() = statusData
-    val alarmRequest: LiveData<AlarmItem> get() = alarmRequestData
+    val alarmRequest: LiveData<TurnAlarmStatus> get() = alarmRequestData
     private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
     private val statusData: MutableLiveData<AlarmStatus> = MutableLiveData(AlarmStatus.Idle)
-    private val alarmRequestData: MutableLiveData<AlarmItem> = MutableLiveData()
+    private val alarmRequestData: MutableLiveData<TurnAlarmStatus> = MutableLiveData()
     private val repositoryObserver = Observer<List<AlarmItem>> { alarmListData.postValue(it) }
 
     init {
-        repository.alarmList.observeForever(repositoryObserver)
+        control.alarmList.observeForever(repositoryObserver)
     }
 
     fun setTurnAlarmRequest(item: AlarmItem) {
-        alarmRequestData.value = item
+        alarmRequestData.value =
+            if (item.isActive) TurnAlarmStatus.TurnOff(item) else  TurnAlarmStatus.TurnOn(item)
+        statusData.value = AlarmStatus.Idle
     }
 
     fun cancelAlarmRequest() {
         alarmRequestData.value = null
     }
 
-    fun addItem(item: AlarmItem) {
-        viewModelScope.launch { repository.addItem(item) }
+    fun addAlarm(event: Intent) {
+        viewModelScope.launch { control.handleEventAsync(event) }
         statusData.value = AlarmStatus.Idle
-    }
-
-    fun updateItem(item: AlarmItem?) {
-        viewModelScope.launch { item?.let { repository.changeAlarm(it) } }
     }
 
     fun editItem(item: AlarmItem?) {
@@ -43,11 +42,13 @@ class MainActivityViewModel(private val repository: AlarmRepository) : ViewModel
         statusData.value = AlarmStatus.Idle
     }
 
+    fun sendEvent(event: Intent) {
+        control.handleEventSync(event)
+    }
+
     override fun onCleared() {
-        if (repository.alarmList.hasObservers()) {
-            repository.alarmList.removeObserver(repositoryObserver)
-        }
-        repository.clear()
+        if (control.alarmList.hasObservers()) control.alarmList.removeObserver(repositoryObserver)
+        control.clear()
         super.onCleared()
     }
 
@@ -56,9 +57,14 @@ class MainActivityViewModel(private val repository: AlarmRepository) : ViewModel
         data class EditStatus(val item: AlarmItem?) : AlarmStatus()
     }
 
-    class Factory(private val repository: AlarmRepository) : ViewModelProvider.Factory {
+    sealed class TurnAlarmStatus {
+        data class TurnOn(val item: AlarmItem) : TurnAlarmStatus()
+        data class TurnOff(val item: AlarmItem) : TurnAlarmStatus()
+    }
+
+    class Factory(private val control: AlarmControl) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return MainActivityViewModel(repository) as T
+            return MainActivityViewModel(control) as T
         }
     }
 }

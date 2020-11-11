@@ -30,11 +30,7 @@ class AlarmListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val listAdapter = AlarmListAdapter()
         listAdapter.itemClickListener = { viewModel.editItem(it) }
-        listAdapter.itemSwitchClickListener = { item ->
-            viewModel.setTurnAlarmRequest(item)
-            item.isActive = !item.isActive
-            viewModel.updateItem(item)
-        }
+        listAdapter.itemSwitchClickListener = { viewModel.setTurnAlarmRequest(it) }
         binding.alarmList.apply {
             val decor = DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
                 ContextCompat.getDrawable(requireContext(), R.drawable.alarm_list_divider)

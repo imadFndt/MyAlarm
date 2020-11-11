@@ -1,4 +1,4 @@
-package com.fndt.alarm.model.util
+package com.fndt.alarm.model
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -19,8 +19,9 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.exoplayer2.util.Util
+import javax.inject.Inject
 
-class AlarmPlayer(private val context: Context) {
+class AlarmPlayer @Inject constructor(private val context: Context) {
     private var player: ExoPlayer = SimpleExoPlayer.Builder(context).build().apply {
         setAudioAttributes(
             AudioAttributes.Builder()
@@ -48,6 +49,7 @@ class AlarmPlayer(private val context: Context) {
         val dataSourceFactory = DefaultDataSourceFactory(
             context, Util.getUserAgent(context, "task5"), null
         )
+        //todo choose sound
         val source = LoopingMediaSource(
             ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
                 MediaItem.fromUri(RawResourceDataSource.buildRawResourceUri(R.raw.radar))

@@ -1,13 +1,13 @@
 package com.fndt.alarm.view.main
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.MainActivityBinding
-import com.fndt.alarm.model.util.AlarmApplication
-import com.fndt.alarm.model.util.AlarmControl
+import com.fndt.alarm.model.util.*
 import com.fndt.alarm.view.main.MainActivityViewModel.AlarmStatus
 
 class MainActivity : AppCompatActivity() {
@@ -27,13 +27,26 @@ class MainActivity : AppCompatActivity() {
                 is AlarmStatus.EditStatus -> navigateTo(R.id.alarm_list, R.id.to_add_fragment)
             }
         }
-        viewModel.alarmRequest.observe(this) { item ->
-            val control = AlarmControl()
-            if (item.isActive) {
-                control.setAlarm(this, item)
-            } else {
-                control.cancelAlarm(this, item)
+        viewModel.alarmRequest.observe(this) { status ->
+            status ?: return@observe
+            val event = when (status) {
+                is MainActivityViewModel.TurnAlarmStatus.TurnOn -> {
+                    Intent(INTENT_SETUP_ALARM).apply {
+                        putExtra(
+                            BUNDLE_EXTRA,
+                            Bundle().apply { putSerializable(ITEM_EXTRA, status.item) })
+                    }
+                }
+                is MainActivityViewModel.TurnAlarmStatus.TurnOff -> {
+                    Intent(INTENT_CANCEL_ALARM).apply {
+                        putExtra(
+                            BUNDLE_EXTRA,
+                            Bundle().apply { putSerializable(ITEM_EXTRA, status.item) })
+                    }
+                }
             }
+            viewModel.sendEvent(event)
+            viewModel.cancelAlarmRequest()
         }
     }
 

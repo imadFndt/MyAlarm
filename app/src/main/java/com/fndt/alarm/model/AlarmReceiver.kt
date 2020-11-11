@@ -1,0 +1,27 @@
+package com.fndt.alarm.model
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import com.fndt.alarm.model.util.*
+import javax.inject.Inject
+
+
+class AlarmReceiver : BroadcastReceiver() {
+    @Inject
+    lateinit var control: AlarmControl
+
+    override fun onReceive(context: Context, intent: Intent) {
+        Log.e("RECEIVED", "EVENT ${intent.action}")
+        (context.applicationContext as AlarmApplication).component.inject(this)
+        val array =
+            intent.getBundleExtra(BUNDLE_EXTRA)?.getSerializable(BYTE_ITEM_EXTRA) as ByteArray
+        val item = AlarmItem.fromByteArray(array)
+        val intent1 = Intent(INTENT_FIRE_ALARM).apply {
+            putExtra(BUNDLE_EXTRA, Bundle().apply { putSerializable(ITEM_EXTRA, item) })
+        }
+        control.handleEventSync(intent1)
+    }
+}
