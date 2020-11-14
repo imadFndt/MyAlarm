@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import com.fndt.alarm.model.AlarmItem.Companion.toTimeString
 import com.fndt.alarm.model.util.BUNDLE_EXTRA
 import com.fndt.alarm.model.util.BYTE_ITEM_EXTRA
 import com.fndt.alarm.model.util.INTENT_FIRE_ALARM
@@ -23,13 +24,14 @@ class AlarmSetup @Inject constructor(private val context: Context) {
             action = INTENT_FIRE_ALARM
         }
         val sender = PendingIntent.getBroadcast(
-            context, alarmItem.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+            context.applicationContext, 13, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
         val cal = alarmItem.time.getTimedCalendar()
-        val am = (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
+        val am =
+            (context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         Log.d(
-            "SET",
-            "EVENT AT ${cal.get(Calendar.HOUR_OF_DAY)} : ${cal.get(Calendar.MINUTE)}"
+            "SETUP SET",
+            "EVENT ${alarmItem.id} AT ${cal.get(Calendar.HOUR_OF_DAY)} : ${cal.get(Calendar.MINUTE)}"
         )
         alarmItem.isActive = true
         //TODO setAlarmClock
@@ -43,14 +45,17 @@ class AlarmSetup @Inject constructor(private val context: Context) {
     }
 
     fun cancelAlarm(alarmItem: AlarmItem) {
-        Log.d("CANCELED", "EVENT$alarmItem")
-        val intent = Intent(context, AlarmReceiver::class.java)
+        Log.d("SETUP CANCEL", "EVENT ${alarmItem.id} AT ${alarmItem.time.toTimeString()}")
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            action = INTENT_FIRE_ALARM
+        }
         alarmItem.isActive = false
         val sender =
             PendingIntent.getBroadcast(
-                context, alarmItem.id.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT
+                context.applicationContext, 13, intent, PendingIntent.FLAG_UPDATE_CURRENT
             )
-        val am = (context.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
+        val am =
+            (context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         am.cancel(sender)
         onChange?.invoke(alarmItem)
     }

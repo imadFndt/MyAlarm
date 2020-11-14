@@ -37,8 +37,8 @@ class AlarmService : Service() {
 
     private fun alarm(alarmItem: AlarmItem) {
         Log.e("FIRING", "EVENT ${alarmItem.id}")
-        alarmControl.playSound()
         startForeground(NOTIFICATION_ID, alarmControl.notify(alarmItem))
+        alarmControl.playSound()
     }
 
     private fun stop(alarmItem: AlarmItem) {

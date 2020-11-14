@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.fndt.alarm.model.AlarmItem
 
-@Database(entities = [AlarmItem::class], version = 2)
+@Database(entities = [AlarmItem::class], version = 1)
 abstract class AlarmDatabase : RoomDatabase() {
     abstract fun issueDao(): AlarmItemDao
 
