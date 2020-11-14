@@ -26,9 +26,8 @@ class AlarmControl @Inject constructor(
     val alarmList: LiveData<List<AlarmItem>> get() = repository.alarmList
 
     init {
-        alarmSetup.onChange = { alarmItem ->
-            repositoryScope.launch { repository.changeAlarm(alarmItem) }
-        }
+        alarmSetup.onChange =
+            { alarmItem -> repositoryScope.launch { repository.changeAlarm(alarmItem) } }
     }
 
     fun onServiceCreate() {
@@ -61,6 +60,8 @@ class AlarmControl @Inject constructor(
         player.alarm()
     }
 
+    fun notify(alarmItem: AlarmItem) = notificationProvider.notify(alarmItem)
+
     private fun setupAlarm(alarmItem: AlarmItem) {
         alarmSetup.setAlarm(alarmItem)
     }
@@ -70,19 +71,24 @@ class AlarmControl @Inject constructor(
     }
 
     private fun fireAlarm(alarmItem: AlarmItem) {
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//            context?.startForegroundService(Intent())
-//        }
-        context?.let { notificationProvider.notify(alarmItem) }
+        Log.d("ALARMCONTROL", "FIRING ${alarmItem.id}")
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            context?.startForegroundService(
+                Intent(context, AlarmService::class.java)
+                    .putExtra(ITEM_EXTRA, alarmItem)
+                    .setAction(INTENT_FIRE_ALARM)
+            )
+        }
     }
 
-    private fun stopAlarm() {
+    fun stopAlarm() {
         context?.let { notificationProvider.cancelNotification() }
-        //player.stop()
+        player.stop()
     }
 
     fun clear() {
-        repositoryScope.cancel()
+        Log.e("FUCK", "SERVICE")
+        //repositoryScope.cancel()
         wakelockProvider.releaseServiceLock()
         context = null
     }

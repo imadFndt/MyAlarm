@@ -1,6 +1,7 @@
 package com.fndt.alarm.view
 
 import android.app.KeyguardManager
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -8,13 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import com.fndt.alarm.databinding.AlarmActivityBinding
-import com.fndt.alarm.model.AlarmPlayer
+import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.model.AlarmService
 import com.fndt.alarm.model.util.AlarmApplication
+import com.fndt.alarm.model.util.INTENT_STOP_ALARM
+import com.fndt.alarm.model.util.ITEM_EXTRA
 
 
 class AlarmActivity : AppCompatActivity() {
     private lateinit var binding: AlarmActivityBinding
-    private val alarmPlayer by lazy { AlarmPlayer(this) }
     private lateinit var viewModel: AlarmViewModel
     private var kl: KeyguardManager.KeyguardLock? = null
 
@@ -22,8 +25,10 @@ class AlarmActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = AlarmActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val viewModelFactory = (application as AlarmApplication).component.getAlarmViewModelFactory()
+        val viewModelFactory =
+            (application as AlarmApplication).component.getAlarmViewModelFactory()
         viewModel = ViewModelProvider(this, viewModelFactory).get(AlarmViewModel::class.java)
+        val item = intent.getSerializableExtra(ITEM_EXTRA) as AlarmItem
         val kg: KeyguardManager? = getSystemService()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
@@ -39,10 +44,13 @@ class AlarmActivity : AppCompatActivity() {
             )
         }
         binding.turnoffButton.setOnClickListener {
-            alarmPlayer.stop()
+            startService(
+                Intent(this, AlarmService::class.java)
+                    .putExtra(ITEM_EXTRA, item)
+                    .setAction(INTENT_STOP_ALARM)
+            )
             finish()
         }
-        alarmPlayer.alarm()
     }
 
     companion object {

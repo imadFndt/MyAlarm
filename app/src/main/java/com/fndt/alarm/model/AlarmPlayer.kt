@@ -59,7 +59,7 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
         player.prepare()
         requestAudioFocus()
         player.playWhenReady = true
-        vibrator?.vibrateSDK(vibratorPattern, 1)
+        vibrator?.vibrateSDK(vibratorPattern, 0)
     }
 
     fun stop() {
@@ -94,9 +94,9 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
 
     private fun Vibrator.vibrateSDK(pattern: LongArray, repeat: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
+            this.vibrate(VibrationEffect.createWaveform(pattern, 0))
         } else {
-            vibrator?.vibrate(pattern, 0)
+            this.vibrate(pattern, 0)
         }
     }
 

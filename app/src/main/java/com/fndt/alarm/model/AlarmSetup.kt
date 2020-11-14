@@ -34,7 +34,8 @@ class AlarmSetup @Inject constructor(private val context: Context) {
         alarmItem.isActive = true
         //TODO setAlarmClock
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
+            am.setAlarmClock(AlarmManager.AlarmClockInfo(cal.timeInMillis, sender), sender)
+            //am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
         } else {
             am.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
         }

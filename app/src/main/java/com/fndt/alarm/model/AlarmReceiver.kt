@@ -16,12 +16,15 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.e("RECEIVED", "EVENT ${intent.action}")
         (context.applicationContext as AlarmApplication).component.inject(this)
-        val array =
-            intent.getBundleExtra(BUNDLE_EXTRA)?.getSerializable(BYTE_ITEM_EXTRA) as ByteArray
-        val item = AlarmItem.fromByteArray(array)
-        val intent1 = Intent(INTENT_FIRE_ALARM).apply {
+        control.handleEventSync(intent.transformToRegularIntent())
+    }
+
+    private fun Intent.transformToRegularIntent(): Intent {
+        val item = AlarmItem.fromByteArray(
+            this.getBundleExtra(BUNDLE_EXTRA)?.getSerializable(BYTE_ITEM_EXTRA) as ByteArray
+        )
+        return Intent(INTENT_FIRE_ALARM).apply {
             putExtra(BUNDLE_EXTRA, Bundle().apply { putSerializable(ITEM_EXTRA, item) })
         }
-        control.handleEventSync(intent1)
     }
 }
