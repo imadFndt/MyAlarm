@@ -12,6 +12,9 @@ interface AlarmItemDao {
     @Update
     fun updateAlarm(alarmItem: AlarmItem)
 
+    @Query("SELECT * FROM alarms WHERE isActive = 1 ORDER BY time ASC")
+    fun getEnabled(): LiveData<List<AlarmItem>>
+
     @Query("SELECT * FROM alarms ORDER BY time ASC")
     fun getAll(): LiveData<List<AlarmItem>>
 

@@ -9,7 +9,7 @@ const val BUNDLE_EXTRA = "eventName"
 const val ITEM_EXTRA = "eventAlarm"
 const val BYTE_ITEM_EXTRA = "byteArrayEvent"
 
-const val INTENT_FIRE_ALARM = "${BuildConfig.APPLICATION_ID}.FIRE_ACTION"
+const val INTENT_FIRE_ALARM = "${BuildConfig.APPLICATION_ID}.FIRE_ALARM"
 const val INTENT_STOP_ALARM = "${BuildConfig.APPLICATION_ID}.STOP_ALARM"
 const val INTENT_SNOOZE_ALARM = "${BuildConfig.APPLICATION_ID}.SNOOZE_ALARM"
 const val INTENT_SETUP_ALARM = "${BuildConfig.APPLICATION_ID}.SETUP_ALARM"

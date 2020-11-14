@@ -9,24 +9,16 @@ import kotlinx.coroutines.launch
 class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
     val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     val status: LiveData<AlarmStatus> get() = statusData
-    val alarmRequest: LiveData<TurnAlarmStatus> get() = alarmRequestData
+    val alarmRequest: LiveData<AlarmItem> get() = alarmRequestData
+
     private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
     private val statusData: MutableLiveData<AlarmStatus> = MutableLiveData(AlarmStatus.Idle)
-    private val alarmRequestData: MutableLiveData<TurnAlarmStatus> = MutableLiveData()
+    private val alarmRequestData: MutableLiveData<AlarmItem> = MutableLiveData()
+
     private val repositoryObserver = Observer<List<AlarmItem>> { alarmListData.postValue(it) }
 
     init {
         control.alarmList.observeForever(repositoryObserver)
-    }
-
-    fun setTurnAlarmRequest(item: AlarmItem) {
-        alarmRequestData.value =
-            if (item.isActive) TurnAlarmStatus.TurnOff(item) else  TurnAlarmStatus.TurnOn(item)
-        statusData.value = AlarmStatus.Idle
-    }
-
-    fun cancelAlarmRequest() {
-        alarmRequestData.value = null
     }
 
     fun addAlarm(event: Intent) {
@@ -55,11 +47,6 @@ class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
     sealed class AlarmStatus {
         object Idle : AlarmStatus()
         data class EditStatus(val item: AlarmItem?) : AlarmStatus()
-    }
-
-    sealed class TurnAlarmStatus {
-        data class TurnOn(val item: AlarmItem) : TurnAlarmStatus()
-        data class TurnOff(val item: AlarmItem) : TurnAlarmStatus()
     }
 
     class Factory(private val control: AlarmControl) : ViewModelProvider.Factory {

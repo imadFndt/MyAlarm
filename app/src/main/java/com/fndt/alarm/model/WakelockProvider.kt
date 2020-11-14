@@ -6,7 +6,10 @@ import com.fndt.alarm.model.util.WAKELOCK_TAG
 import javax.inject.Inject
 
 class WakelockProvider @Inject constructor(pm: PowerManager?) {
-    var serviceLock: PowerManager.WakeLock? =
+    private var serviceLock: PowerManager.WakeLock? =
+        pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG)
+
+    var playLock: PowerManager.WakeLock? =
         pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG)
 
     fun acquireServiceLock() {

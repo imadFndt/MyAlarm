@@ -22,15 +22,7 @@ import com.google.android.exoplayer2.util.Util
 import javax.inject.Inject
 
 class AlarmPlayer @Inject constructor(private val context: Context) {
-    private var player: ExoPlayer = SimpleExoPlayer.Builder(context).build().apply {
-        setAudioAttributes(
-            AudioAttributes.Builder()
-                .setContentType(C.CONTENT_TYPE_MUSIC)
-                .setUsage(C.USAGE_ALARM)
-                .build(),
-            false
-        )
-    }
+    private lateinit var player: ExoPlayer
     private var vibrator: Vibrator? = context.getSystemService()
     private val vibratorPattern = longArrayOf(0, 400, 600)
 
@@ -46,6 +38,7 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
     }
 
     fun alarm() {
+        player = getPlayer()
         val dataSourceFactory = DefaultDataSourceFactory(
             context, Util.getUserAgent(context, "task5"), null
         )
@@ -98,6 +91,16 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
         } else {
             this.vibrate(pattern, 0)
         }
+    }
+
+    private fun getPlayer() = SimpleExoPlayer.Builder(context).build().apply {
+        setAudioAttributes(
+            AudioAttributes.Builder()
+                .setContentType(C.CONTENT_TYPE_MUSIC)
+                .setUsage(C.USAGE_ALARM)
+                .build(),
+            false
+        )
     }
 
     private inner class PlayerAudioFocusChangeListener : AudioManager.OnAudioFocusChangeListener {

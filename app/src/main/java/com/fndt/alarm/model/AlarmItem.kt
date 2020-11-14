@@ -2,20 +2,17 @@ package com.fndt.alarm.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fndt.alarm.model.util.REPEAT_FRIDAY
-import com.fndt.alarm.model.util.REPEAT_MONDAY
+import com.fndt.alarm.model.util.REPEAT_NONE
 import java.io.*
-import kotlin.experimental.or
 
 @Entity(tableName = "alarms")
 data class AlarmItem(
     var time: Long,
     var name: String,
     var isActive: Boolean,
-    var repeatPeriod: Byte = REPEAT_FRIDAY or REPEAT_MONDAY,
+    var repeatPeriod: Byte = REPEAT_NONE,
     var melody: Int
 ) : Serializable {
-    //TODO PARCELS
     init {
         if (time > 1439) throw Exception()
     }

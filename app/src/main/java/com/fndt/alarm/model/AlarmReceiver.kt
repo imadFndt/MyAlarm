@@ -3,7 +3,6 @@ package com.fndt.alarm.model
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import com.fndt.alarm.model.util.*
 import javax.inject.Inject
@@ -23,8 +22,6 @@ class AlarmReceiver : BroadcastReceiver() {
         val item = AlarmItem.fromByteArray(
             this.getBundleExtra(BUNDLE_EXTRA)?.getSerializable(BYTE_ITEM_EXTRA) as ByteArray
         )
-        return Intent(INTENT_FIRE_ALARM).apply {
-            putExtra(BUNDLE_EXTRA, Bundle().apply { putSerializable(ITEM_EXTRA, item) })
-        }
+        return item.toIntent(INTENT_FIRE_ALARM)
     }
 }

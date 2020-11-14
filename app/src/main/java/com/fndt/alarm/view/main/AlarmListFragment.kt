@@ -1,5 +1,6 @@
 package com.fndt.alarm.view.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
+import com.fndt.alarm.model.util.INTENT_ADD_ALARM
+import com.fndt.alarm.model.util.ITEM_EXTRA
 
 class AlarmListFragment : Fragment() {
     private lateinit var binding: AlarmListFragmentBinding
@@ -30,7 +33,10 @@ class AlarmListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val listAdapter = AlarmListAdapter()
         listAdapter.itemClickListener = { viewModel.editItem(it) }
-        listAdapter.itemSwitchClickListener = { viewModel.setTurnAlarmRequest(it) }
+        listAdapter.itemSwitchClickListener = { item ->
+            item.isActive = !item.isActive
+            viewModel.addAlarm(Intent(INTENT_ADD_ALARM).putExtra(ITEM_EXTRA, item))
+            }
         binding.alarmList.apply {
             val decor = DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
                 ContextCompat.getDrawable(requireContext(), R.drawable.alarm_list_divider)

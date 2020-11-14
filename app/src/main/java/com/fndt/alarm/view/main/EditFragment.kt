@@ -27,7 +27,6 @@ class EditFragment : Fragment() {
         (requireActivity().application as AlarmApplication).component.getViewModelFactory()
     }
     private lateinit var currentItem: AlarmItem
-    private var isChanging = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -43,7 +42,7 @@ class EditFragment : Fragment() {
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
         time = (hour * 60 + minute).toLong()
-        currentItem = AlarmItem(time, "DefaultName", false, REPEAT_NONE, 1)
+        currentItem = AlarmItem(time, "DefaultName", true, REPEAT_NONE, 1)
         binding.temporaryTimePicker.apply {
             setIs24HourView(true)
             setTime(hour, minute)
@@ -56,12 +55,7 @@ class EditFragment : Fragment() {
             val intent = Intent(INTENT_ADD_ALARM).apply {
                 putExtra(ITEM_EXTRA, currentItem)
             }
-            if (isChanging) {
-                //viewModel.addAlarm(intent)
-            } else {
-                //viewModel.addAlarm(intent)
-                viewModel.setTurnAlarmRequest(currentItem)
-            }
+            viewModel.addAlarm(intent)
         }
         binding.closeButton.setOnClickListener { viewModel.cancelItemUpdate() }
         binding.descriptionLayout.setOnClickListener { buildDescriptionDialog() }
