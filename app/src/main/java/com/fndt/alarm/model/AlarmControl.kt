@@ -31,8 +31,11 @@ class AlarmControl @Inject constructor(
     private val actionData: MutableLiveData<Action> = MutableLiveData()
 
     private val nextAlarmObserver = Observer<AlarmItem?> { item ->
-        item?.let { setupAlarm(item) } ?: cancelAlarm()
+        Log.e("control nextObserver", "received ${item?.time}")
+        if (savedValue != item) item?.let { setupAlarm(item) } ?: cancelAlarm()
+        savedValue = item
     }
+    private var savedValue: AlarmItem? = null
 
     init {
         alarmSetup.onChange =
@@ -84,6 +87,9 @@ class AlarmControl @Inject constructor(
     }
 
     private fun fireAlarm(alarmItem: AlarmItem) {
+        //TODO REMOVE
+        alarmItem.isActive = !alarmItem.isActive
+        repositoryScope.launch { handleEventAsync(alarmItem.toIntent(INTENT_ADD_ALARM)) }
         Log.d("ALARMCONTROL", "FIRING ${alarmItem.id}")
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             context?.startService(

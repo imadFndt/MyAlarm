@@ -34,11 +34,10 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
 
     private fun getNextEnabledItem(items: List<AlarmItem>): AlarmItem? {
         val cal = Calendar.getInstance()
-        val now = (cal.get(Calendar.HOUR) * 60 + cal.get(Calendar.MINUTE)).toLong()
+        val now = (cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)).toLong()
         items.forEach {
             if (now < it.time) return it
         }
-
         return null
     }
 }

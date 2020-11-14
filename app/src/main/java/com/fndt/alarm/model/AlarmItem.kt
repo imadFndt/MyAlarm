@@ -18,7 +18,7 @@ data class AlarmItem(
     }
 
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 1
+    var id: Long = 0
 
     fun toByteArray(): ByteArray {
         val byteArrayOutputStream = ByteArrayOutputStream()
