@@ -3,7 +3,7 @@ package com.fndt.alarm.view.main
 import androidx.recyclerview.widget.DiffUtil
 import com.fndt.alarm.model.AlarmItem
 
-class AlarmItemCallback(
+class AlarmItemDiffCallback(
     private val oldList: List<AlarmItem>,
     private val newList: List<AlarmItem>
 ) :
@@ -18,5 +18,6 @@ class AlarmItemCallback(
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
         oldList[oldItemPosition].name == newList[newItemPosition].name &&
                 oldList[oldItemPosition].time == newList[newItemPosition].time &&
-                oldList[oldItemPosition].id == newList[newItemPosition].id
+                oldList[oldItemPosition].id == newList[newItemPosition].id &&
+                (oldList[oldItemPosition].isActive == newList[newItemPosition].isActive)
 }

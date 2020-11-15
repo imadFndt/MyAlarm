@@ -16,6 +16,12 @@ class AlarmService : Service() {
     @Inject
     lateinit var alarmControl: AlarmControl
 
+    @Inject
+    lateinit var player: AlarmPlayer
+
+    @Inject
+    lateinit var notificationProvider: NotificationProvider
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
@@ -37,13 +43,24 @@ class AlarmService : Service() {
 
     private fun alarm(alarmItem: AlarmItem) {
         Log.e("SERIVCE FIRE", "EVENT ${alarmItem.id}")
-        startForeground(NOTIFICATION_ID, alarmControl.notify(alarmItem))
-        alarmControl.playSound()
+        startForeground(NOTIFICATION_ID, notify(alarmItem))
+        playSound()
     }
 
     private fun stop(alarmItem: AlarmItem) {
         Log.e("SERVICE", "STOP ${alarmItem.id}")
         stopForeground(true)
-        alarmControl.stopAlarm()
+        stopAlarm()
+    }
+
+    private fun playSound() {
+        player.alarm()
+    }
+
+    private fun notify(alarmItem: AlarmItem) = notificationProvider.notify(alarmItem)
+
+    private fun stopAlarm() {
+        notificationProvider.cancelNotification()
+        player.stop()
     }
 }

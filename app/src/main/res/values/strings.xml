@@ -7,4 +7,5 @@
     <string name="choose_description">Choose description</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
+    <string name="turn_off">Turn off</string>
 </resources>

@@ -17,8 +17,6 @@ import javax.inject.Singleton
 @Singleton
 class AlarmControl @Inject constructor(
     private var context: Context?,
-    private val player: AlarmPlayer,
-    private val notificationProvider: NotificationProvider,
     private val alarmSetup: AlarmSetup,
     private val wakelockProvider: WakelockProvider,
     private val repository: AlarmRepository
@@ -61,21 +59,8 @@ class AlarmControl @Inject constructor(
         Log.d("ALARMCONTROL", "Got event ${intent.action}")
         when (intent.action) {
             INTENT_FIRE_ALARM -> fireAlarm(item)
-            INTENT_STOP_ALARM -> stopAlarm()
             INTENT_SNOOZE_ALARM -> TODO()
         }
-    }
-
-    //TODO MB MOVE THIS
-    fun playSound() {
-        player.alarm()
-    }
-
-    fun notify(alarmItem: AlarmItem) = notificationProvider.notify(alarmItem)
-
-    fun stopAlarm() {
-        context?.let { notificationProvider.cancelNotification() }
-        player.stop()
     }
 
     private fun setupAlarm(alarmItem: AlarmItem) {
@@ -90,6 +75,8 @@ class AlarmControl @Inject constructor(
         //TODO REMOVE
         alarmItem.isActive = !alarmItem.isActive
         repositoryScope.launch { handleEventAsync(alarmItem.toIntent(INTENT_ADD_ALARM)) }
+        Log.d("ALARMCONTROL", "FIRING CONTEXT IS NULL: ${context == null}")
+
         Log.d("ALARMCONTROL", "FIRING ${alarmItem.id}")
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             context?.startService(

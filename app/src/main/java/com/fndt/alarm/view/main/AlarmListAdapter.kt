@@ -24,17 +24,18 @@ class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>(
     }
 
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
+        val item = items[position]
         holder.binding.apply {
-            alarmName.text = items[position].name
-            alarmSwitch.isChecked = items[position].isActive
-            alarmTime.text = items[position].time.toTimeString()
+            alarmName.text = item.name
+            if (alarmSwitch.isChecked != item.isActive) alarmSwitch.isChecked = item.isActive
+            alarmTime.text = item.time.toTimeString()
         }
     }
 
     override fun getItemCount(): Int = items.size
 
     fun updateItems(newList: List<AlarmItem>) {
-        val diff = DiffUtil.calculateDiff(AlarmItemCallback(items, newList))
+        val diff = DiffUtil.calculateDiff(AlarmItemDiffCallback(items, newList))
         items.clear()
         items.addAll(newList)
         diff.dispatchUpdatesTo(this)

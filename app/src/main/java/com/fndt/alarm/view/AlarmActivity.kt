@@ -6,14 +6,17 @@ import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.lifecycle.ViewModelProvider
+import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmActivityBinding
-import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.model.AlarmItem.Companion.toTimeString
 import com.fndt.alarm.model.AlarmService
 import com.fndt.alarm.model.util.AlarmApplication
 import com.fndt.alarm.model.util.INTENT_STOP_ALARM
 import com.fndt.alarm.model.util.ITEM_EXTRA
+import com.fndt.alarm.model.util.getAlarmItem
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -28,8 +31,8 @@ class AlarmActivity : AppCompatActivity() {
         val viewModelFactory =
             (application as AlarmApplication).component.getAlarmViewModelFactory()
         viewModel = ViewModelProvider(this, viewModelFactory).get(AlarmViewModel::class.java)
-        val item = intent.getSerializableExtra(ITEM_EXTRA) as AlarmItem
         val kg: KeyguardManager? = getSystemService()
+        window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimary)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
@@ -42,6 +45,12 @@ class AlarmActivity : AppCompatActivity() {
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
                         WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
             )
+        }
+
+        val item = intent?.getAlarmItem()
+        item?.let {
+            binding.alarmTime.text = item.time.toTimeString()
+            binding.alarmName.text = "${item.name}dastardsdsfdsfs"
         }
         binding.turnoffButton.setOnClickListener {
             startService(

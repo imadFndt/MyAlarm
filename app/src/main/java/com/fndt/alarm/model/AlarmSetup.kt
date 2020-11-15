@@ -32,7 +32,6 @@ class AlarmSetup @Inject constructor(private val context: Context) {
             "SETUP SET",
             "EVENT ${alarmItem.id} AT ${cal.get(Calendar.HOUR_OF_DAY)} : ${cal.get(Calendar.MINUTE)}"
         )
-        //TODO setAlarmClock
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             am.setAlarmClock(AlarmManager.AlarmClockInfo(cal.timeInMillis, sender), sender)
         } else {

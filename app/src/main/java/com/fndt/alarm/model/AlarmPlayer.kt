@@ -26,6 +26,8 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
     private var vibrator: Vibrator? = context.getSystemService()
     private val vibratorPattern = longArrayOf(0, 400, 600)
 
+    private var isPlaying = false
+
     private var audioFocusGain = false
     private val focusLock = Any()
     private val audioFocusListener = PlayerAudioFocusChangeListener()
@@ -38,6 +40,10 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
     }
 
     fun alarm() {
+        if (isPlaying) {
+            player.release()
+            vibrator?.cancel()
+        }
         player = getPlayer()
         val dataSourceFactory = DefaultDataSourceFactory(
             context, Util.getUserAgent(context, "task5"), null
