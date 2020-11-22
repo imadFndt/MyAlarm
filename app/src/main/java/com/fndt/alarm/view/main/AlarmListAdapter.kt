@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmItemBinding
 import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.AlarmItem.Companion.toTimeString
+import com.fndt.alarm.model.util.toRepeatString
 
 class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>() {
     var itemClickListener: ((AlarmItem) -> Unit)? = null
@@ -26,7 +28,8 @@ class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>(
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         val item = items[position]
         holder.binding.apply {
-            alarmName.text = item.name
+            alarmName.text = holder.binding.root.resources
+                .getString(R.string.item_list_title, item.name, item.repeatPeriod.toRepeatString())
             if (alarmSwitch.isChecked != item.isActive) alarmSwitch.isChecked = item.isActive
             alarmTime.text = item.time.toTimeString()
         }

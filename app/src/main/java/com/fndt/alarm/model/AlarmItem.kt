@@ -32,6 +32,9 @@ data class AlarmItem(
         return result
     }
 
+    fun getHour(): Long = time / 60
+    fun getMinute(): Long = time % 60
+
     companion object {
         fun Long.toTimeString(): String {
             val hoursString = "${this / 60}"

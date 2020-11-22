@@ -38,6 +38,7 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
         items.forEach {
             if (now < it.time) return it
         }
+        if (items.isNotEmpty()) return items[0]
         return null
     }
 }

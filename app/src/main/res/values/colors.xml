@@ -7,6 +7,7 @@
     <color name="backgroundColorOff">#FAFAFA</color>
     <color name="backgroundColorOut">#F0F0F0</color>
     <color name="switchTrackColorOff">#E1E6F3</color>
+    <color name="backgroundDayChoose">#E1E6F3</color>
     <color name="switchTrackColorOn">@color/colorPrimary</color>
     <color name="switchTrackBorderColorOff">#E1E6F3</color>
     <color name="switchTrackBorderColorOn">@color/colorPrimaryDarker</color>

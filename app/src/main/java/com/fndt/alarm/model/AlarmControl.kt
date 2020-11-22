@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.fndt.alarm.model.db.AlarmRepository
 import com.fndt.alarm.model.util.*
@@ -24,20 +23,18 @@ class AlarmControl @Inject constructor(
     private val repositoryScope = MainScope()
 
     val alarmList: LiveData<List<AlarmItem>> get() = repository.alarmList
-    val action: LiveData<Action> get() = actionData
-
-    private val actionData: MutableLiveData<Action> = MutableLiveData()
 
     private val nextAlarmObserver = Observer<AlarmItem?> { item ->
         Log.e("control nextObserver", "received ${item?.time}")
-        if (savedValue != item) item?.let { setupAlarm(item) } ?: cancelAlarm()
+        if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
         savedValue = item
     }
     private var savedValue: AlarmItem? = null
 
     init {
-        alarmSetup.onChange =
-            { alarmItem -> repositoryScope.launch { repository.changeAlarm(alarmItem) } }
+        alarmSetup.onChange = {
+
+        }
         repository.nextAlarm.observeForever(nextAlarmObserver)
     }
 
@@ -63,14 +60,6 @@ class AlarmControl @Inject constructor(
         }
     }
 
-    private fun setupAlarm(alarmItem: AlarmItem) {
-        alarmSetup.setAlarm(alarmItem)
-    }
-
-    private fun cancelAlarm() {
-        alarmSetup.cancelAlarm()
-    }
-
     private fun fireAlarm(alarmItem: AlarmItem) {
         //TODO REMOVE
         alarmItem.isActive = !alarmItem.isActive
@@ -89,14 +78,8 @@ class AlarmControl @Inject constructor(
 
     fun clear() {
         Log.e("CONTROL", "Clear")
-        //TODO Cancel async jobs
         wakelockProvider.releaseServiceLock()
         context = null
         repositoryScope.cancel()
-    }
-
-    sealed class Action {
-        object Nothing : Action()
-        data class FireAlarm(val alarmItem: AlarmItem) : Action()
     }
 }
