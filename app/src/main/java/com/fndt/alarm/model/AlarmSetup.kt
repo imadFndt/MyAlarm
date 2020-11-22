@@ -13,27 +13,30 @@ import java.util.*
 import javax.inject.Inject
 
 class AlarmSetup @Inject constructor(private val context: Context) {
-    var onChange: ((AlarmItem) -> Unit)? = null
+    var currentItemWithActualTime: AlarmItem? = null
+    var onChange: ((AlarmItem?) -> Unit)? = null
 
-    fun setAlarm(alarmItem: AlarmItem) {
+    fun setAlarm(nextItem: NextAlarmItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(BUNDLE_EXTRA, Bundle().apply {
-                putByteArray(BYTE_ITEM_EXTRA, alarmItem.toByteArray())
+                putByteArray(BYTE_ITEM_EXTRA, nextItem.alarmItem.toByteArray())
             })
             action = INTENT_FIRE_ALARM
         }
         val sender = PendingIntent.getBroadcast(
             context.applicationContext, 13, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val cal = alarmItem.time.getTimedCalendar()
+        val cal = nextItem.alarmItem.time.getTimedCalendar()
         val am =
             (context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         Log.d(
             "SETUP SET",
-            "EVENT ${alarmItem.id} AT ${cal.get(Calendar.HOUR_OF_DAY)} : ${cal.get(Calendar.MINUTE)}"
+            "EVENT ${nextItem.alarmItem.id} AT ${cal.time}"
         )
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            am.setAlarmClock(AlarmManager.AlarmClockInfo(cal.timeInMillis, sender), sender)
+            am.setAlarmClock(
+                AlarmManager.AlarmClockInfo(nextItem.timedCalendar.timeInMillis, sender), sender
+            )
         } else {
             am.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
         }
@@ -51,6 +54,8 @@ class AlarmSetup @Inject constructor(private val context: Context) {
         val am =
             (context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         am.cancel(sender)
+        currentItemWithActualTime = null
+        onChange?.invoke(currentItemWithActualTime)
     }
 
     private fun Long.getTimedCalendar(): Calendar = Calendar.getInstance().apply {

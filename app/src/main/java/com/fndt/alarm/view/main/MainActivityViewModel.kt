@@ -4,17 +4,18 @@ import android.content.Intent
 import androidx.lifecycle.*
 import com.fndt.alarm.model.AlarmControl
 import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.model.NextAlarmItem
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
     val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     val status: LiveData<AlarmStatus> get() = statusData
     val alarmRequest: LiveData<AlarmItem> get() = alarmRequestData
+    val nextAlarm: LiveData<NextAlarmItem?> get() = control.nextAlarm
 
     private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
     private val statusData: MutableLiveData<AlarmStatus> = MutableLiveData(AlarmStatus.Idle)
     private val alarmRequestData: MutableLiveData<AlarmItem> = MutableLiveData()
-
     private val repositoryObserver = Observer<List<AlarmItem>> { alarmListData.postValue(it) }
 
     init {

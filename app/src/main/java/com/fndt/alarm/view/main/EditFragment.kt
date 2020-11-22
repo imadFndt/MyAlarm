@@ -13,13 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AddFragmentBinding
+import com.fndt.alarm.databinding.DayChooseLayout2Binding
 import com.fndt.alarm.databinding.InputTextLayoutBinding
 import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.util.AlarmApplication
-import com.fndt.alarm.model.util.INTENT_ADD_ALARM
-import com.fndt.alarm.model.util.ITEM_EXTRA
-import com.fndt.alarm.model.util.REPEAT_NONE
+import com.fndt.alarm.model.util.*
 import java.util.*
+import kotlin.experimental.or
 
 class EditFragment : Fragment() {
     private lateinit var binding: AddFragmentBinding
@@ -42,15 +41,25 @@ class EditFragment : Fragment() {
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
         time = (hour * 60 + minute).toLong()
-        currentItem = AlarmItem(time, "DefaultName", true, REPEAT_NONE, 1)
+        viewModel.status.observe(viewLifecycleOwner) { status ->
+            if (status is MainActivityViewModel.AlarmStatus.EditStatus) {
+                status.item?.let {
+                    currentItem = it
+                } ?: run {
+                    currentItem = AlarmItem(time, "Alarm!", true, REPEAT_NONE, 1)
+                }
+                updateView(currentItem)
+            }
+        }
+        val daysAdapter = DaysAdapter()
+        binding.dayChoose.daysList.adapter = daysAdapter
+
         binding.temporaryTimePicker.apply {
             setIs24HourView(true)
-            setTime(hour, minute)
             setOnTimeChangedListener { _, hourOfDay, minute ->
                 currentItem.time = (hourOfDay * 60 + minute).toLong()
             }
         }
-        binding.descriptionValue.text = currentItem.name
         binding.doneButton.setOnClickListener {
             val intent = Intent(INTENT_ADD_ALARM).apply {
                 putExtra(ITEM_EXTRA, currentItem)
@@ -58,22 +67,37 @@ class EditFragment : Fragment() {
             viewModel.addAlarm(intent)
         }
         binding.closeButton.setOnClickListener { viewModel.cancelItemUpdate() }
+        binding.repeatLayout.setOnClickListener { buildDayChooseDialog() }
         binding.descriptionLayout.setOnClickListener { buildDescriptionDialog() }
     }
 
-    private fun TimePicker.setTime(hour: Int, minute: Int) {
+    private fun updateView(currentItem: AlarmItem) {
+        binding.temporaryTimePicker.setTime(currentItem.getHour(), currentItem.getMinute())
+        binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString()
+        binding.descriptionValue.text = currentItem.name
+        binding.soundValue // todo
+    }
+
+    private fun TimePicker.setTime(hour: Long, minute: Long) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            this.hour = hour
-            this.minute = minute
+            this.hour = hour.toInt()
+            this.minute = minute.toInt()
         } else {
-            this.currentHour = hour
-            this.currentMinute = minute
+            this.currentHour = hour.toInt()
+            this.currentMinute = minute.toInt()
         }
     }
 
+    //todo make it better
     private fun buildDescriptionDialog() {
         val dialog = Dialog(requireContext())
         val dialogBinding = InputTextLayoutBinding.inflate(dialog.layoutInflater)
+        dialog.apply {
+            val height = resources.getDimension(R.dimen.descriptionDialogHeight).toInt()
+            setContentView(dialogBinding.root)
+            window?.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, height)
+            window?.setGravity(Gravity.BOTTOM)
+        }
         dialogBinding.descriptionDoneButton.setOnClickListener {
             currentItem.name = dialogBinding.editText.text.toString()
             binding.descriptionValue.text = currentItem.name
@@ -81,10 +105,61 @@ class EditFragment : Fragment() {
         }
         dialogBinding.descriptionCancelButton.setOnClickListener { dialog.hide() }
         dialogBinding.editText.text.append(currentItem.name)
-        val height = resources.getDimension(R.dimen.dialogHeight).toInt()
-        dialog.setContentView(dialogBinding.root)
-        dialog.window?.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, height)
-        dialog.window?.setGravity(Gravity.BOTTOM)
+        dialog.show()
+    }
+
+    //todo make it better(recyclerview)
+    private fun buildDayChooseDialog() {
+        val dialog = Dialog(requireContext())
+        val dialogBinding = DayChooseLayout2Binding.inflate(dialog.layoutInflater)
+        dialog.apply {
+            val height = resources.getDimension(R.dimen.dayChooseDialogHeight).toInt()
+            setContentView(dialogBinding.root)
+            window?.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, height)
+            window?.setGravity(Gravity.BOTTOM)
+        }
+        dialogBinding.dayChooseDoneButton.setOnClickListener {
+            currentItem.repeatPeriod = REPEAT_NONE
+            if (dialogBinding.mondayCheckbox.isChecked) {
+                currentItem.repeatPeriod = currentItem.repeatPeriod or REPEAT_MONDAY
+            }
+            if (dialogBinding.tuesdayCheckbox.isChecked) {
+                currentItem.repeatPeriod = currentItem.repeatPeriod or REPEAT_TUESDAY
+            }
+            if (dialogBinding.wednesdayCheckbox.isChecked) {
+                currentItem.repeatPeriod = currentItem.repeatPeriod or REPEAT_WEDNESDAY
+            }
+            if (dialogBinding.thursdayCheckbox.isChecked) {
+                currentItem.repeatPeriod = currentItem.repeatPeriod or REPEAT_THURSDAY
+            }
+            if (dialogBinding.fridayCheckbox.isChecked) {
+                currentItem.repeatPeriod = currentItem.repeatPeriod or REPEAT_FRIDAY
+            }
+            if (dialogBinding.saturdayCheckbox.isChecked) {
+                currentItem.repeatPeriod = currentItem.repeatPeriod or REPEAT_SATURDAY
+            }
+            if (dialogBinding.sundayCheckbox.isChecked) {
+                currentItem.repeatPeriod = currentItem.repeatPeriod or REPEAT_SUNDAY
+            }
+            binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString()
+            dialog.hide()
+        }
+        dialogBinding.mondayCheckbox.isChecked =
+            currentItem.repeatPeriod == currentItem.repeatPeriod or REPEAT_MONDAY
+        dialogBinding.tuesdayCheckbox.isChecked =
+            currentItem.repeatPeriod == currentItem.repeatPeriod or REPEAT_TUESDAY
+        dialogBinding.wednesdayCheckbox.isChecked =
+            currentItem.repeatPeriod == currentItem.repeatPeriod or REPEAT_WEDNESDAY
+        dialogBinding.thursdayCheckbox.isChecked =
+            currentItem.repeatPeriod == currentItem.repeatPeriod or REPEAT_THURSDAY
+        dialogBinding.fridayCheckbox.isChecked =
+            currentItem.repeatPeriod == currentItem.repeatPeriod or REPEAT_FRIDAY
+        dialogBinding.saturdayCheckbox.isChecked =
+            currentItem.repeatPeriod == currentItem.repeatPeriod or REPEAT_SATURDAY
+
+        dialogBinding.sundayCheckbox.isChecked =
+            currentItem.repeatPeriod == currentItem.repeatPeriod or REPEAT_SUNDAY
+        dialogBinding.dayChooseCancelButton.setOnClickListener { dialog.hide() }
         dialog.show()
     }
 }
