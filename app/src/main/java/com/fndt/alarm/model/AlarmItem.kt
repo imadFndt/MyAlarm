@@ -36,13 +36,6 @@ data class AlarmItem(
     fun getMinute(): Long = time % 60
 
     companion object {
-        fun Long.toTimeString(): String {
-            val hoursString = "${this / 60}"
-            val minutes = this % 60
-            val minutesString = "${if (minutes < 10) "0" else ""}$minutes"
-            return "$hoursString:$minutesString"
-        }
-
         fun fromByteArray(array: ByteArray): AlarmItem {
             val byteArrayInputStream = ByteArrayInputStream(array)
             val objectInput: ObjectInput

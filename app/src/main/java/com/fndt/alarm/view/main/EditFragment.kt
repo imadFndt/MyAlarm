@@ -108,7 +108,7 @@ class EditFragment : Fragment() {
         dialog.show()
     }
 
-    //todo make it better(recycler)
+    //todo make it better(recyclerview)
     private fun buildDayChooseDialog() {
         val dialog = Dialog(requireContext())
         val dialogBinding = DayChooseLayout2Binding.inflate(dialog.layoutInflater)

@@ -22,6 +22,27 @@ fun Byte.toDayString(): CharSequence? = when (this) {
     else -> ""
 }
 
+fun Long.toTimeString(): String {
+    val hoursString = "${this / 60}"
+    val minutes = this % 60
+    val minutesString = "${if (minutes < 10) "0" else ""}$minutes"
+    return "$hoursString:$minutesString"
+}
+
+fun Long.toExtendedTimeString(): String {
+    val days = this / (24 * 60 * 60 * 1000)
+    val remainingDay = this - days * 24 * 60 * 60 * 1000
+    val hours = remainingDay / (60 * 60 * 1000)
+    val remainingMinutes = remainingDay - hours * 60 * 60 * 1000
+    val minutes = remainingMinutes / (60 * 1000)
+    val seconds = remainingMinutes % (60 * 1000) / 1000
+    val daysString = if (days == 0L) "" else "$days d."
+    val hoursString = "${if (hours < 10) "0" else ""}$hours"
+    val minutesString = "${if (minutes < 10) "0" else ""}$minutes"
+    val secondsString = "${if (seconds < 10) "0" else ""}$seconds"
+    return "$daysString $hoursString:$minutesString:$secondsString"
+}
+
 fun Byte.toRepeatString(): CharSequence? {
     var finalString = ""
     var count = 0

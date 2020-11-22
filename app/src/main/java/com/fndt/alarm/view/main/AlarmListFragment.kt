@@ -2,6 +2,7 @@ package com.fndt.alarm.view.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +12,21 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
+import com.fndt.alarm.model.NextAlarmItem
 import com.fndt.alarm.model.util.INTENT_ADD_ALARM
 import com.fndt.alarm.model.util.ITEM_EXTRA
+import com.fndt.alarm.model.util.toExtendedTimeString
+import kotlinx.coroutines.*
+import java.util.*
 
 class AlarmListFragment : Fragment() {
     private lateinit var binding: AlarmListFragmentBinding
     private val viewModel: MainActivityViewModel by activityViewModels {
         (requireActivity() as MainActivity).viewModelFactory
     }
+    var trackJob: Job? = null
+    var previousTrackJob: Job? = null
+    var nextItem: NextAlarmItem? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,7 +44,7 @@ class AlarmListFragment : Fragment() {
         listAdapter.itemSwitchClickListener = { item ->
             item.isActive = !item.isActive
             viewModel.addAlarm(Intent(INTENT_ADD_ALARM).putExtra(ITEM_EXTRA, item))
-            }
+        }
         binding.alarmList.apply {
             val decor = DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
                 ContextCompat.getDrawable(requireContext(), R.drawable.alarm_list_divider)
@@ -47,5 +55,32 @@ class AlarmListFragment : Fragment() {
         }
         binding.addButton.setOnClickListener { viewModel.editItem(null) }
         viewModel.alarmList.observe(viewLifecycleOwner) { listAdapter.updateItems(it) }
+        viewModel.nextAlarm.observe(viewLifecycleOwner) { nextItem ->
+            nextItem?.let {
+                stopTrackingTime(false)
+                trackTime(nextItem)
+            } ?: run { stopTrackingTime(true) }
+        }
+    }
+
+    private fun trackTime(nextItem: NextAlarmItem) {
+        trackJob = CoroutineScope(Dispatchers.Main).launch {
+            previousTrackJob?.join()
+            previousTrackJob = null
+            while (isActive) {
+                val cal = Calendar.getInstance()
+                Log.d("ALARMLIST", "TRACKING NOW: $cal; ALARM ${nextItem.timedCalendar}")
+                val diff = nextItem.timedCalendar.timeInMillis - cal.timeInMillis
+                binding.nextAlarmRemainingText.text = diff.toExtendedTimeString()
+                delay(100)
+            }
+        }
+    }
+
+    private fun stopTrackingTime(update: Boolean) {
+        if (update) binding.nextAlarmRemainingText.text = resources.getString(R.string.nothing_set)
+        previousTrackJob = trackJob
+        trackJob?.cancel()
+        trackJob = null
     }
 }

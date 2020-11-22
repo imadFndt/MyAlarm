@@ -10,8 +10,8 @@ import android.os.Build
 import android.util.Log
 import androidx.core.content.getSystemService
 import com.fndt.alarm.R
-import com.fndt.alarm.model.AlarmItem.Companion.toTimeString
 import com.fndt.alarm.model.util.ITEM_EXTRA
+import com.fndt.alarm.model.util.toTimeString
 import com.fndt.alarm.view.AlarmActivity
 import javax.inject.Inject
 

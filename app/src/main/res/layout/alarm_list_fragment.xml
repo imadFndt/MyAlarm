@@ -10,7 +10,6 @@
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        app:layout_constraintBottom_toTopOf="@id/list_container"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -48,12 +47,33 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/next_alarm"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toTopOf="@id/list_container"
+        app:layout_constraintTop_toBottomOf="@id/title_bar">
+
+        <TextView
+            android:id="@+id/next_alarm_remaining_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/alarmTimeTextColor"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="00:30:29" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/list_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="@drawable/list_border"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_bar">
+        app:layout_constraintTop_toBottomOf="@id/next_alarm">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/alarm_list"

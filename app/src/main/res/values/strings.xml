@@ -3,7 +3,7 @@
     <string name="add_alarm">Add alarm</string>
     <string name="repeat">Repeat</string>
     <string name="sound">Sound</string>
-    <string name="item_list_title">%s; %s</string>
+    <string name="item_list_title">%s, %s</string>
     <string name="description">Description</string>
     <string name="choose_description">Choose description</string>
     <string name="done">Done</string>
@@ -17,4 +17,5 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
+    <string name="nothing_set">Nothing set</string>
 </resources>

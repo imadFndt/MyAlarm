@@ -23,13 +23,14 @@ class AlarmControl @Inject constructor(
     private val repositoryScope = MainScope()
 
     val alarmList: LiveData<List<AlarmItem>> get() = repository.alarmList
+    val nextAlarm: LiveData<NextAlarmItem?> get() = repository.nextAlarm
 
-    private val nextAlarmObserver = Observer<AlarmItem?> { item ->
-        Log.e("control nextObserver", "received ${item?.time}")
+    private val nextAlarmObserver = Observer<NextAlarmItem?> { item ->
+        Log.e("control nextObserver", "received ${item?.alarmItem?.time}")
         if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
         savedValue = item
     }
-    private var savedValue: AlarmItem? = null
+    private var savedValue: NextAlarmItem? = null
 
     init {
         alarmSetup.onChange = {

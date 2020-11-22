@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmItemBinding
 import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmItem.Companion.toTimeString
 import com.fndt.alarm.model.util.toRepeatString
+import com.fndt.alarm.model.util.toTimeString
 
 class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>() {
     var itemClickListener: ((AlarmItem) -> Unit)? = null

@@ -16,27 +16,27 @@ class AlarmSetup @Inject constructor(private val context: Context) {
     var currentItemWithActualTime: AlarmItem? = null
     var onChange: ((AlarmItem?) -> Unit)? = null
 
-    fun setAlarm(alarmItem: AlarmItem) {
+    fun setAlarm(nextItem: NextAlarmItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra(BUNDLE_EXTRA, Bundle().apply {
-                putByteArray(BYTE_ITEM_EXTRA, alarmItem.toByteArray())
+                putByteArray(BYTE_ITEM_EXTRA, nextItem.alarmItem.toByteArray())
             })
             action = INTENT_FIRE_ALARM
         }
         val sender = PendingIntent.getBroadcast(
             context.applicationContext, 13, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val nowCal = Calendar.getInstance()
-        val cal = alarmItem.time.getTimedCalendar()
-        if (nowCal.after(cal)) cal.add(Calendar.DATE, 1)
+        val cal = nextItem.alarmItem.time.getTimedCalendar()
         val am =
             (context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         Log.d(
             "SETUP SET",
-            "EVENT ${alarmItem.id} AT ${cal.time}"
+            "EVENT ${nextItem.alarmItem.id} AT ${cal.time}"
         )
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            am.setAlarmClock(AlarmManager.AlarmClockInfo(cal.timeInMillis, sender), sender)
+            am.setAlarmClock(
+                AlarmManager.AlarmClockInfo(nextItem.timedCalendar.timeInMillis, sender), sender
+            )
         } else {
             am.setExact(AlarmManager.RTC_WAKEUP, cal.timeInMillis, sender)
         }
