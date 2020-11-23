@@ -8,7 +8,6 @@ import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.AlarmRepeat
 import com.fndt.alarm.model.NextAlarmItem
 import com.fndt.alarm.model.util.toCalendarDayOfWeek
-import com.fndt.alarm.model.util.toExtendedTimeString
 import com.fndt.alarm.model.util.toTimeString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -33,9 +32,7 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
     suspend fun wipeData() =
         withContext(Dispatchers.IO) { alarmItemDao.wipeTable() }
 
-    private fun getNextEnabledItem(items: List<AlarmItem>): NextAlarmItem? {
-        return items.getTimedList().findClosestItem()
-    }
+    private fun getNextEnabledItem(items: List<AlarmItem>): NextAlarmItem? = items.getTimedList().findClosestItem()
 
     private fun List<AlarmItem>.getTimedList(): List<NextAlarmItem> {
         val newList = mutableListOf<NextAlarmItem>()
@@ -46,14 +43,13 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
     private fun processItem(item: AlarmItem): List<NextAlarmItem> {
         val itemsAlarms = mutableListOf<NextAlarmItem>()
         for (i in item.repeatPeriod) {
-            itemsAlarms.add(
-                NextAlarmItem(
-                    item, when (i) {
-                        AlarmRepeat.NONE, AlarmRepeat.ONCE_DESTROY -> item.time.getTodayTimedCalendar()
-                        else -> item.time.getWeekdayTimedCalendar(i)
-                    }
-                )
+            val nextItem = NextAlarmItem(
+                item, when (i) {
+                    AlarmRepeat.NONE, AlarmRepeat.ONCE_DESTROY -> item.time.getTodayTimedCalendar()
+                    else -> item.time.getWeekdayTimedCalendar(i)
+                }
             )
+            itemsAlarms.add(nextItem)
         }
         return itemsAlarms
     }

@@ -24,8 +24,7 @@ class AlarmActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = AlarmActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val viewModelFactory =
-            (application as AlarmApplication).component.getAlarmViewModelFactory()
+        val viewModelFactory = (application as AlarmApplication).component.getAlarmViewModelFactory()
         viewModel = ViewModelProvider(this, viewModelFactory).get(AlarmViewModel::class.java)
         val kg: KeyguardManager? = getSystemService()
         window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimary)
@@ -50,9 +49,7 @@ class AlarmActivity : AppCompatActivity() {
         }
         binding.turnoffButton.setOnClickListener {
             startService(
-                Intent(this, AlarmService::class.java)
-                    .putExtra(ITEM_EXTRA, item)
-                    .setAction(INTENT_STOP_ALARM)
+                Intent(this, AlarmService::class.java).putExtra(ITEM_EXTRA, item).setAction(INTENT_STOP_ALARM)
             )
             finish()
         }

@@ -26,16 +26,13 @@ class AlarmControl @Inject constructor(
     val nextAlarm: LiveData<NextAlarmItem?> get() = repository.nextAlarm
 
     private val nextAlarmObserver = Observer<NextAlarmItem?> { item ->
-        Log.e("control nextObserver", "received ${item?.alarmItem?.time}")
+        Log.e("AlarmControl", "nextObserver received ${item?.alarmItem?.time}")
         if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
         savedValue = item
     }
     private var savedValue: NextAlarmItem? = null
 
     init {
-        alarmSetup.onChange = {
-
-        }
         repository.nextAlarm.observeForever(nextAlarmObserver)
     }
 
@@ -54,27 +51,24 @@ class AlarmControl @Inject constructor(
     fun handleEventSync(intent: Intent) {
         val item = intent.getAlarmItem()
         item ?: return
-        Log.d("ALARMCONTROL", "Got event ${intent.action}")
+        Log.d("AlarmControl", "Received event ${intent.action}")
         when (intent.action) {
             INTENT_FIRE_ALARM -> fireAlarm(item)
             INTENT_SNOOZE_ALARM -> TODO()
         }
     }
 
-    private fun fireAlarm(alarmItem: AlarmItem) {
-        //TODO REMOVE
-        alarmItem.isActive = !alarmItem.isActive
-        repositoryScope.launch { handleEventAsync(alarmItem.toIntent(INTENT_ADD_ALARM)) }
-        Log.d("ALARMCONTROL", "FIRING ${alarmItem.id}")
+    private fun fireAlarm(item: AlarmItem) {
+        if (item.repeatPeriod.contains(AlarmRepeat.NONE)) item.isActive = !item.isActive
+        repositoryScope.launch { handleEventAsync(item.toIntent(INTENT_ADD_ALARM)) }
+        Log.d("AlarmControl", "fireAlarm(${item.id})")
         context?.startService(
-            Intent(context, AlarmService::class.java)
-                .putExtra(ITEM_EXTRA, alarmItem)
-                .setAction(INTENT_FIRE_ALARM)
+            Intent(context, AlarmService::class.java).putExtra(ITEM_EXTRA, item).setAction(INTENT_FIRE_ALARM)
         )
     }
 
     fun clear() {
-        Log.e("CONTROL", "Clear")
+        Log.e("AlarmControl", "clear()")
         wakelockProvider.releaseServiceLock()
         context = null
         repositoryScope.cancel()

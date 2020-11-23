@@ -8,6 +8,7 @@ const val WAKELOCK_TAG = "${BuildConfig.APPLICATION_ID}:WAKELOCK_TAG"
 const val BUNDLE_EXTRA = "eventName"
 const val ITEM_EXTRA = "eventAlarm"
 const val BYTE_ITEM_EXTRA = "byteArrayEvent"
+const val PENDING_REQUEST_CODE = 13
 
 const val INTENT_FIRE_ALARM = "${BuildConfig.APPLICATION_ID}.FIRE_ALARM"
 const val INTENT_STOP_ALARM = "${BuildConfig.APPLICATION_ID}.STOP_ALARM"

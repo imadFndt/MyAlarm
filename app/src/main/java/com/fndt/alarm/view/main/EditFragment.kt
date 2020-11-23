@@ -65,9 +65,7 @@ class EditFragment : Fragment() {
             }
         }
         binding.doneButton.setOnClickListener {
-            val intent = Intent(INTENT_ADD_ALARM).apply {
-                putExtra(ITEM_EXTRA, currentItem)
-            }
+            val intent = Intent(INTENT_ADD_ALARM).apply { putExtra(ITEM_EXTRA, currentItem) }
             viewModel.addAlarm(intent)
         }
         binding.closeButton.setOnClickListener { viewModel.cancelItemUpdate() }
@@ -124,31 +122,14 @@ class EditFragment : Fragment() {
         }
         dialogBinding.dayChooseDoneButton.setOnClickListener {
             currentItem.repeatPeriod = mutableListOf()
-            if (dialogBinding.mondayCheckbox.isChecked) {
-                currentItem.repeatPeriod.add(AlarmRepeat.MONDAY)
-            }
-            if (dialogBinding.tuesdayCheckbox.isChecked) {
-                currentItem.repeatPeriod.add(AlarmRepeat.TUESDAY)
-            }
-            if (dialogBinding.wednesdayCheckbox.isChecked) {
-                currentItem.repeatPeriod.add(AlarmRepeat.WEDNESDAY)
-            }
-            if (dialogBinding.thursdayCheckbox.isChecked) {
-                currentItem.repeatPeriod.add(AlarmRepeat.THURSDAY)
-            }
-            if (dialogBinding.fridayCheckbox.isChecked) {
-                currentItem.repeatPeriod.add(AlarmRepeat.FRIDAY)
-
-            }
-            if (dialogBinding.saturdayCheckbox.isChecked) {
-                currentItem.repeatPeriod.add(AlarmRepeat.SATURDAY)
-            }
-            if (dialogBinding.sundayCheckbox.isChecked) {
-                currentItem.repeatPeriod.add(AlarmRepeat.SUNDAY)
-            }
-            if (currentItem.repeatPeriod.isEmpty()) {
-                currentItem.repeatPeriod.add(AlarmRepeat.NONE)
-            }
+            if (dialogBinding.mondayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.MONDAY)
+            if (dialogBinding.tuesdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.TUESDAY)
+            if (dialogBinding.wednesdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.WEDNESDAY)
+            if (dialogBinding.thursdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.THURSDAY)
+            if (dialogBinding.fridayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.FRIDAY)
+            if (dialogBinding.saturdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.SATURDAY)
+            if (dialogBinding.sundayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.SUNDAY)
+            if (currentItem.repeatPeriod.isEmpty()) currentItem.repeatPeriod.add(AlarmRepeat.NONE)
             binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString()
             dialog.hide()
         }

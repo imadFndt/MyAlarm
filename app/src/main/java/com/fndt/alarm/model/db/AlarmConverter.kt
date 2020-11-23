@@ -6,6 +6,7 @@ import com.fndt.alarm.model.util.*
 import kotlin.experimental.or
 
 object AlarmConverter {
+    //todo use byte value
     @TypeConverter
     @JvmStatic
     fun toByte(repeats: List<AlarmRepeat>): Byte {
