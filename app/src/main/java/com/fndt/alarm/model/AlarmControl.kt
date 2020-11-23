@@ -65,16 +65,12 @@ class AlarmControl @Inject constructor(
         //TODO REMOVE
         alarmItem.isActive = !alarmItem.isActive
         repositoryScope.launch { handleEventAsync(alarmItem.toIntent(INTENT_ADD_ALARM)) }
-        Log.d("ALARMCONTROL", "FIRING CONTEXT IS NULL: ${context == null}")
-
         Log.d("ALARMCONTROL", "FIRING ${alarmItem.id}")
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            context?.startService(
-                Intent(context, AlarmService::class.java)
-                    .putExtra(ITEM_EXTRA, alarmItem)
-                    .setAction(INTENT_FIRE_ALARM)
-            )
-        }
+        context?.startService(
+            Intent(context, AlarmService::class.java)
+                .putExtra(ITEM_EXTRA, alarmItem)
+                .setAction(INTENT_FIRE_ALARM)
+        )
     }
 
     fun clear() {

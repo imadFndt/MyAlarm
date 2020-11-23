@@ -2,7 +2,6 @@ package com.fndt.alarm.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.fndt.alarm.model.util.REPEAT_NONE
 import java.io.*
 
 @Entity(tableName = "alarms")
@@ -10,7 +9,7 @@ data class AlarmItem(
     var time: Long,
     var name: String,
     var isActive: Boolean,
-    var repeatPeriod: Byte = REPEAT_NONE,
+    var repeatPeriod: MutableList<AlarmRepeat> = mutableListOf(AlarmRepeat.NONE),
     var melody: Int
 ) : Serializable {
     init {

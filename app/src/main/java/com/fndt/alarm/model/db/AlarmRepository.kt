@@ -5,7 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.model.AlarmRepeat
 import com.fndt.alarm.model.NextAlarmItem
+import com.fndt.alarm.model.util.toCalendarDayOfWeek
+import com.fndt.alarm.model.util.toExtendedTimeString
 import com.fndt.alarm.model.util.toTimeString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -27,34 +30,56 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
             alarmItemDao.insert(alarmItem)
         }
 
-    suspend fun changeAlarm(alarmItem: AlarmItem) =
-        withContext(Dispatchers.IO) { alarmItemDao.insert(alarmItem) }
-
     suspend fun wipeData() =
         withContext(Dispatchers.IO) { alarmItemDao.wipeTable() }
 
     private fun getNextEnabledItem(items: List<AlarmItem>): NextAlarmItem? {
-        var alarmItem: AlarmItem?
-        val nowCal = Calendar.getInstance()
-        val now = (nowCal.get(Calendar.HOUR_OF_DAY) * 60 + nowCal.get(Calendar.MINUTE)).toLong()
-        items.forEach {
-            if (now < it.time) {
-                val calendar = it.time.getTimedCalendar()
-                if (calendar.before(nowCal)) calendar.add(Calendar.DATE, 1)
-                return NextAlarmItem(it, calendar)
-            }
-        }
-        if (items.isNotEmpty()) {
-            val calendar = items[0].time.getTimedCalendar()
-            if (calendar.before(nowCal)) calendar.add(Calendar.DATE, 1)
-            return NextAlarmItem(items[0], calendar)
-        }
-        return null
+        return items.getTimedList().findClosestItem()
     }
 
-    private fun Long.getTimedCalendar(): Calendar = Calendar.getInstance().apply {
-        set(Calendar.HOUR_OF_DAY, (this@getTimedCalendar / 60).toInt())
-        set(Calendar.MINUTE, (this@getTimedCalendar % 60).toInt())
+    private fun List<AlarmItem>.getTimedList(): List<NextAlarmItem> {
+        val newList = mutableListOf<NextAlarmItem>()
+        forEach { newList.addAll(processItem(it)) }
+        return newList
+    }
+
+    private fun processItem(item: AlarmItem): List<NextAlarmItem> {
+        val itemsAlarms = mutableListOf<NextAlarmItem>()
+        for (i in item.repeatPeriod) {
+            itemsAlarms.add(
+                NextAlarmItem(
+                    item, when (i) {
+                        AlarmRepeat.NONE, AlarmRepeat.ONCE_DESTROY -> item.time.getTodayTimedCalendar()
+                        else -> item.time.getWeekdayTimedCalendar(i)
+                    }
+                )
+            )
+        }
+        return itemsAlarms
+    }
+
+    private fun Long.getTodayTimedCalendar() = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, (this@getTodayTimedCalendar / 60).toInt())
+        set(Calendar.MINUTE, (this@getTodayTimedCalendar % 60).toInt())
         set(Calendar.SECOND, 0)
+        if (this.before(Calendar.getInstance())) add(Calendar.DATE, 1)
+    }
+
+    private fun Long.getWeekdayTimedCalendar(alarmRepeat: AlarmRepeat) =
+        Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, (this@getWeekdayTimedCalendar / 60).toInt())
+            set(Calendar.MINUTE, (this@getWeekdayTimedCalendar % 60).toInt())
+            set(Calendar.SECOND, 0)
+            val targetDay = alarmRepeat.toCalendarDayOfWeek()
+            set(Calendar.DAY_OF_WEEK, targetDay)
+            if (this.before(Calendar.getInstance())) add(Calendar.DATE, 7)
+        }
+
+    private fun List<NextAlarmItem>.findClosestItem(): NextAlarmItem? {
+        val now = Calendar.getInstance().timeInMillis
+        val afterNow = mutableListOf<NextAlarmItem>()
+        forEach { if (it.timedCalendar.timeInMillis > now) afterNow.add(it) }
+        return afterNow.minByOrNull { it.timedCalendar.timeInMillis }
     }
 }
+
