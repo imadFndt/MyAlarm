@@ -109,38 +109,12 @@ fun List<AlarmRepeat>.toRepeatString(): CharSequence? {
         }
     }
     return finalString
-//    if (this == (this or REPEAT_MONDAY)) {
-//        finalString += "M"
-//        count++
-//    }
-//    if (this == (this or REPEAT_TUESDAY)) {
-//        if (count > 0) finalString += ", "
-//        finalString += "T"
-//        count++
-//    }
-//    if (this == (this or REPEAT_WEDNESDAY)) {
-//        if (count > 0) finalString += ", "
-//        finalString += "W"
-//        count++
-//    }
-//    if (this == (this or REPEAT_THURSDAY)) {
-//        if (count > 0) finalString += ", "
-//        finalString += "T"
-//        count++
-//    }
-//    if (this == (this or REPEAT_FRIDAY)) {
-//        if (count > 0) finalString += ", "
-//        finalString += "F"
-//        count++
-//    }
-//    if (this == (this or REPEAT_SATURDAY)) {
-//        if (count > 0) finalString += ", "
-//        finalString += "S"
-//        count++
-//    }
-//    if (this == (this or REPEAT_SUNDAY)) {
-//        if (count > 0) finalString += ", "
-//        finalString += "S"
-//        count++
-//    }
 }
+
+fun AlarmItem.snoozed() = AlarmItem(
+    time = this.time + FIVE_MINUTES,
+    name = this.name,
+    true,
+    mutableListOf(AlarmRepeat.ONCE_DESTROY),
+    melody = this.melody
+)

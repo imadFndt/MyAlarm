@@ -20,8 +20,8 @@ object AlarmConverter {
                 AlarmRepeat.FRIDAY -> byteRepeat or REPEAT_FRIDAY
                 AlarmRepeat.SATURDAY -> byteRepeat or REPEAT_SATURDAY
                 AlarmRepeat.SUNDAY -> byteRepeat or REPEAT_SUNDAY
-                AlarmRepeat.NONE -> byteRepeat or REPEAT_NONE
-                AlarmRepeat.ONCE_DESTROY -> byteRepeat or REPEAT_ONCE_DESTROY
+                AlarmRepeat.NONE -> REPEAT_NONE
+                AlarmRepeat.ONCE_DESTROY -> REPEAT_ONCE_DESTROY
             }
         }
         return byteRepeat
@@ -30,6 +30,7 @@ object AlarmConverter {
     @TypeConverter
     @JvmStatic
     fun fromByte(repeats: Byte): List<AlarmRepeat> {
+        if (repeats < 0) return mutableListOf(AlarmRepeat.ONCE_DESTROY)
         val list = mutableListOf<AlarmRepeat>()
         for (i in REPEATS_LIST) {
             if (repeats == repeats or i) {
@@ -42,7 +43,6 @@ object AlarmConverter {
                         REPEAT_FRIDAY -> AlarmRepeat.FRIDAY
                         REPEAT_SATURDAY -> AlarmRepeat.SATURDAY
                         REPEAT_SUNDAY -> AlarmRepeat.SUNDAY
-                        REPEAT_ONCE_DESTROY -> AlarmRepeat.ONCE_DESTROY
                         else -> AlarmRepeat.NONE
                     }
                 )

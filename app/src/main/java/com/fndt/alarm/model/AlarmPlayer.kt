@@ -4,11 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.getSystemService
-import com.fndt.alarm.R
+import com.fndt.alarm.model.AlarmItem.Companion.getMelodyTitle
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -17,7 +18,6 @@ import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.LoopingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.exoplayer2.util.Util
 import javax.inject.Inject
 
@@ -39,7 +39,7 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
         null
     }
 
-    fun alarm() {
+    fun alarm(alarmItem: AlarmItem) {
         if (isPlaying) {
             player.release()
             vibrator?.cancel()
@@ -48,10 +48,9 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
         val dataSourceFactory = DefaultDataSourceFactory(
             context, Util.getUserAgent(context, "task5"), null
         )
-        //todo choose sound
         val source = LoopingMediaSource(
             ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
-                MediaItem.fromUri(RawResourceDataSource.buildRawResourceUri(R.raw.radar))
+                MediaItem.fromUri(Uri.parse(alarmItem.melody))
             )
         )
         player.setMediaSource(source)

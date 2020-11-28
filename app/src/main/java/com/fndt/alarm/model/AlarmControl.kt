@@ -3,6 +3,7 @@ package com.fndt.alarm.model
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import com.fndt.alarm.model.db.AlarmRepository
@@ -45,6 +46,7 @@ class AlarmControl @Inject constructor(
         item ?: return
         when (intent.action) {
             INTENT_ADD_ALARM -> repository.addItem(item)
+            INTENT_REMOVE_ALARM -> repository.remove(item)
         }
     }
 
@@ -54,17 +56,27 @@ class AlarmControl @Inject constructor(
         Log.d("AlarmControl", "Received event ${intent.action}")
         when (intent.action) {
             INTENT_FIRE_ALARM -> fireAlarm(item)
-            INTENT_SNOOZE_ALARM -> TODO()
+            INTENT_SNOOZE_ALARM -> snoozeAlarm(item)
         }
     }
 
     private fun fireAlarm(item: AlarmItem) {
         if (item.repeatPeriod.contains(AlarmRepeat.NONE)) item.isActive = !item.isActive
-        repositoryScope.launch { handleEventAsync(item.toIntent(INTENT_ADD_ALARM)) }
+        repositoryScope.launch {
+            if (item.repeatPeriod.contains(AlarmRepeat.ONCE_DESTROY)) {
+                handleEventAsync(item.toIntent(INTENT_REMOVE_ALARM))
+            } else {
+                handleEventAsync(item.toIntent(INTENT_ADD_ALARM))
+            }
+        }
         Log.d("AlarmControl", "fireAlarm(${item.id})")
-        context?.startService(
+        val serviceIntent =
             Intent(context, AlarmService::class.java).putExtra(ITEM_EXTRA, item).setAction(INTENT_FIRE_ALARM)
-        )
+        context?.let { ContextCompat.startForegroundService(it, serviceIntent) }
+    }
+
+    private fun snoozeAlarm(item: AlarmItem) {
+        repositoryScope.launch { repository.addItem(item.snoozed()) }
     }
 
     fun clear() {

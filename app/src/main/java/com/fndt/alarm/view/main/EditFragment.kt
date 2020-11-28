@@ -2,6 +2,8 @@ package com.fndt.alarm.view.main
 
 import android.app.Dialog
 import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,11 +18,10 @@ import com.fndt.alarm.databinding.AddFragmentBinding
 import com.fndt.alarm.databinding.DayChooseLayout2Binding
 import com.fndt.alarm.databinding.InputTextLayoutBinding
 import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.model.AlarmItem.Companion.getMelodyTitle
 import com.fndt.alarm.model.AlarmRepeat
-import com.fndt.alarm.model.util.AlarmApplication
-import com.fndt.alarm.model.util.INTENT_ADD_ALARM
-import com.fndt.alarm.model.util.ITEM_EXTRA
-import com.fndt.alarm.model.util.toRepeatString
+import com.fndt.alarm.model.defaultAlarmSound
+import com.fndt.alarm.model.util.*
 import java.util.*
 
 class EditFragment : Fragment() {
@@ -50,7 +51,7 @@ class EditFragment : Fragment() {
                     currentItem = it
                 } ?: run {
                     currentItem =
-                        AlarmItem(time, "Alarm!", true, mutableListOf(AlarmRepeat.NONE), 1)
+                        AlarmItem(time, "Alarm!", true, mutableListOf(AlarmRepeat.NONE), defaultAlarmSound)
                 }
                 updateView(currentItem)
             }
@@ -71,13 +72,43 @@ class EditFragment : Fragment() {
         binding.closeButton.setOnClickListener { viewModel.cancelItemUpdate() }
         binding.repeatLayout.setOnClickListener { buildDayChooseDialog() }
         binding.descriptionLayout.setOnClickListener { buildDescriptionDialog() }
+        binding.soundLayout.setOnClickListener { startPickActivity() }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == RINGTONE_REQ_CODE) {
+            data?.let {
+                val alert: String? =
+                    data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
+                alert?.let {
+                    currentItem.melody = alert
+                    updateView(currentItem)
+                }
+            }
+        }
+    }
+
+
+    private fun startPickActivity() {
+        startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+            putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentItem.melody)
+
+            putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
+            putExtra(
+                RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI,
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            )
+
+            putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
+            putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+        }, RINGTONE_REQ_CODE)
     }
 
     private fun updateView(currentItem: AlarmItem) {
         binding.temporaryTimePicker.setTime(currentItem.getHour(), currentItem.getMinute())
         binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString()
         binding.descriptionValue.text = currentItem.name
-        binding.soundValue // todo
+        binding.soundValue.text = currentItem.melody.getMelodyTitle(requireContext())
     }
 
     private fun TimePicker.setTime(hour: Long, minute: Long) {

@@ -44,7 +44,7 @@ class AlarmService : Service() {
     private fun alarm(alarmItem: AlarmItem) {
         Log.e("SERIVCE FIRE", "EVENT ${alarmItem.id}")
         startForeground(NOTIFICATION_ID, notify(alarmItem))
-        playSound()
+        playSound(alarmItem)
     }
 
     private fun stop(alarmItem: AlarmItem) {
@@ -53,8 +53,8 @@ class AlarmService : Service() {
         stopAlarm()
     }
 
-    private fun playSound() {
-        player.alarm()
+    private fun playSound(alarmItem: AlarmItem) {
+        player.alarm(alarmItem)
     }
 
     private fun notify(alarmItem: AlarmItem) = notificationProvider.notify(alarmItem)

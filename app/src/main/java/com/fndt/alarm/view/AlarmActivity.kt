@@ -45,12 +45,19 @@ class AlarmActivity : AppCompatActivity() {
         val item = intent?.getAlarmItem()
         item?.let {
             binding.alarmTime.text = item.time.toTimeString()
-            binding.alarmName.text = "${item.name}dastardsdsfdsfs"
+            binding.alarmName.text = item.name
         }
         binding.turnoffButton.setOnClickListener {
             startService(
                 Intent(this, AlarmService::class.java).putExtra(ITEM_EXTRA, item).setAction(INTENT_STOP_ALARM)
             )
+            finish()
+        }
+        binding.snoozeButton.setOnClickListener {
+            startService(
+                Intent(this, AlarmService::class.java).putExtra(ITEM_EXTRA, item).setAction(INTENT_STOP_ALARM)
+            )
+            item?.let { viewModel.handleEvent(item.toIntent(INTENT_SNOOZE_ALARM)) }
             finish()
         }
     }

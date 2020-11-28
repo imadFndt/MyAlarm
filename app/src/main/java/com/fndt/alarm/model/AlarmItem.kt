@@ -1,8 +1,14 @@
 package com.fndt.alarm.model
 
+import android.content.Context
+import android.media.RingtoneManager
+import android.net.Uri
+import android.provider.Settings
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.*
+
+val defaultAlarmSound = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()
 
 @Entity(tableName = "alarms")
 data class AlarmItem(
@@ -10,7 +16,7 @@ data class AlarmItem(
     var name: String,
     var isActive: Boolean,
     var repeatPeriod: MutableList<AlarmRepeat> = mutableListOf(AlarmRepeat.NONE),
-    var melody: Int
+    var melody: String = defaultAlarmSound
 ) : Serializable {
     init {
         if (time > 1439) throw Exception()
@@ -43,6 +49,12 @@ data class AlarmItem(
             objectInput.close()
             byteArrayInputStream.close()
             return result
+        }
+
+        fun String.getMelodyTitle(context: Context): String {
+            RingtoneManager.getRingtone(context, Uri.parse(this)).apply {
+                return getTitle(context)
+            }
         }
     }
 }

@@ -1,25 +1,11 @@
 package com.fndt.alarm.view
 
 import android.content.Intent
-import androidx.lifecycle.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.fndt.alarm.model.AlarmControl
-import com.fndt.alarm.model.AlarmItem
-import kotlinx.coroutines.launch
 
 class AlarmViewModel(private val alarmControl: AlarmControl) : ViewModel() {
-    val alarm: LiveData<AlarmItem> get() = alarmData
-    private val alarmData: MutableLiveData<AlarmItem> = MutableLiveData()
-
-    init {
-
-    }
-
-    fun requestNextAlarm(time: Long) {
-        viewModelScope.launch {
-            // alarmData.postValue(repository.getNextAlarm(time))
-        }
-    }
-
     fun handleEvent(event: Intent) {
         alarmControl.handleEventSync(event)
     }

@@ -21,4 +21,5 @@
     <string name="nothing_set">Nothing set</string>
     <string name="days_remaining">%s days</string>
     <string name="day_remaining">%s day</string>
+    <string name="snooze">Snooze</string>
 </resources>

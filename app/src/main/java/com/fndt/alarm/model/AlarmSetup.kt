@@ -37,7 +37,7 @@ class AlarmSetup @Inject constructor(private val context: Context) {
         Log.d("AlarmSetup", "Cancel")
         val intent = Intent(context, AlarmReceiver::class.java).apply { action = INTENT_FIRE_ALARM }
         val sender = PendingIntent.getBroadcast(
-            context.applicationContext, 13, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            context.applicationContext, PENDING_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT
         )
         val am = (context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
         am.cancel(sender)

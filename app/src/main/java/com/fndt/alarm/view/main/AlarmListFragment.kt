@@ -25,7 +25,6 @@ class AlarmListFragment : Fragment() {
     }
     var trackJob: Job? = null
     var previousTrackJob: Job? = null
-    var nextItem: NextAlarmItem? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
