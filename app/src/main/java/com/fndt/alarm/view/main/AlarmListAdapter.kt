@@ -28,8 +28,14 @@ class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>(
     override fun onBindViewHolder(holder: AlarmViewHolder, position: Int) {
         val item = items[position]
         holder.binding.apply {
-            alarmName.text = holder.binding.root.resources
-                .getString(R.string.item_list_title, item.name, item.repeatPeriod.toRepeatString())
+            alarmName.text = if (item.name == "") {
+                item.repeatPeriod.toRepeatString(holder.itemView.context)
+            } else {
+                holder.binding.root.resources.getString(
+                    R.string.item_list_title, item.name, item.repeatPeriod.toRepeatString(holder.itemView.context)
+                )
+            }
+
             if (alarmSwitch.isChecked != item.isActive) alarmSwitch.isChecked = item.isActive
             alarmTime.text = item.time.toTimeString()
         }

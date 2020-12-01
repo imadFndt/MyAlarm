@@ -4,6 +4,9 @@ import com.fndt.alarm.BuildConfig
 
 const val WAKELOCK_TAG = "${BuildConfig.APPLICATION_ID}:WAKELOCK_TAG"
 
+const val DAY_CHOOSE_FRAGMENT_TAG = "DAY_CHOOSE_FRAGMENT"
+
+
 //Intent shit
 const val BUNDLE_EXTRA = "eventName"
 const val ITEM_EXTRA = "eventAlarm"

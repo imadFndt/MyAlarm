@@ -10,12 +10,15 @@ import kotlinx.coroutines.launch
 class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
     val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     val status: LiveData<AlarmStatus> get() = statusData
-    val alarmRequest: LiveData<AlarmItem> get() = alarmRequestData
+    val addAlarmRequest: LiveData<AlarmItem> get() = addAlarmRequestData
     val nextAlarm: LiveData<NextAlarmItem?> get() = control.nextAlarm
+    val itemEdited: LiveData<AlarmItem> get() = itemEditedData
 
     private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
     private val statusData: MutableLiveData<AlarmStatus> = MutableLiveData(AlarmStatus.Idle)
-    private val alarmRequestData: MutableLiveData<AlarmItem> = MutableLiveData()
+    private val addAlarmRequestData: MutableLiveData<AlarmItem> = MutableLiveData()
+    private val itemEditedData: MutableLiveData<AlarmItem> = MutableLiveData()
+
     private val repositoryObserver = Observer<List<AlarmItem>> { alarmListData.postValue(it) }
 
     init {
@@ -37,6 +40,10 @@ class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
 
     fun sendEvent(event: Intent) {
         control.handleEventSync(event)
+    }
+
+    fun updateEditedItem(alarmItem: AlarmItem) {
+        itemEditedData.value = alarmItem
     }
 
     override fun onCleared() {

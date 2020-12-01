@@ -22,4 +22,13 @@
     <string name="days_remaining">%s days</string>
     <string name="day_remaining">%s day</string>
     <string name="snooze">Snooze</string>
+    <string name="add_some_description">Add some description</string>
+    <string name="non_repeatable">Non repeatable</string>
+    <string name="monday_short">Mon</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="thursday_short">Th</string>
+    <string name="friday_short">Fri</string>
+    <string name="saturday_short">Sat</string>
+    <string name="sunday_short">Sun</string>
 </resources>

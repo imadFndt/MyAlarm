@@ -9,9 +9,6 @@ class WakelockProvider @Inject constructor(pm: PowerManager?) {
     private var serviceLock: PowerManager.WakeLock? =
         pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG)
 
-    var playLock: PowerManager.WakeLock? =
-        pm?.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG)
-
     fun acquireServiceLock() {
         serviceLock?.acquire(ONE_HOUR_IN_MS)
     }

@@ -1,28 +1,28 @@
 package com.fndt.alarm.view.main
 
-import android.app.Dialog
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.TimePicker
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AddFragmentBinding
-import com.fndt.alarm.databinding.DayChooseLayout2Binding
-import com.fndt.alarm.databinding.InputTextLayoutBinding
 import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.AlarmItem.Companion.getMelodyTitle
 import com.fndt.alarm.model.AlarmRepeat
 import com.fndt.alarm.model.defaultAlarmSound
 import com.fndt.alarm.model.util.*
 import java.util.*
+
 
 class EditFragment : Fragment() {
     private lateinit var binding: AddFragmentBinding
@@ -40,6 +40,7 @@ class EditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupTextHide(view)
         val time: Long
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -47,18 +48,17 @@ class EditFragment : Fragment() {
         time = (hour * 60 + minute).toLong()
         viewModel.status.observe(viewLifecycleOwner) { status ->
             if (status is MainActivityViewModel.AlarmStatus.EditStatus) {
-                status.item?.let {
-                    currentItem = it
-                } ?: run {
-                    currentItem =
-                        AlarmItem(time, "Alarm!", true, mutableListOf(AlarmRepeat.NONE), defaultAlarmSound)
+                status.item?.let { currentItem = it } ?: run {
+                    currentItem = AlarmItem(time, "", true, mutableListOf(AlarmRepeat.NONE), defaultAlarmSound)
                 }
+                viewModel.updateEditedItem(currentItem)
                 updateView(currentItem)
             }
         }
-        val daysAdapter = DaysAdapter()
-        binding.dayChoose.daysList.adapter = daysAdapter
-
+        viewModel.itemEdited.observe(viewLifecycleOwner) {
+            currentItem = it
+            updateView(currentItem)
+        }
         binding.temporaryTimePicker.apply {
             setIs24HourView(true)
             setOnTimeChangedListener { _, hourOfDay, minute ->
@@ -70,9 +70,22 @@ class EditFragment : Fragment() {
             viewModel.addAlarm(intent)
         }
         binding.closeButton.setOnClickListener { viewModel.cancelItemUpdate() }
-        binding.repeatLayout.setOnClickListener { buildDayChooseDialog() }
-        binding.descriptionLayout.setOnClickListener { buildDescriptionDialog() }
+        binding.repeatLayout.setOnClickListener { showDayChooseFragment() }
+        binding.descriptionEditText.setOnKeyListener { v, keyCode, event ->
+            currentItem.name = binding.descriptionEditText.text.toString()
+            if ((event.action == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                v.clearFocus()
+                hideKeyboard()
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
         binding.soundLayout.setOnClickListener { startPickActivity() }
+    }
+
+    private fun showDayChooseFragment() {
+        val dayChooseBottomSheet = DayChooseBottomSheetFragment.newInstance()
+        dayChooseBottomSheet.show(childFragmentManager, DAY_CHOOSE_FRAGMENT_TAG)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -104,10 +117,15 @@ class EditFragment : Fragment() {
         }, RINGTONE_REQ_CODE)
     }
 
+    private fun hideKeyboard() {
+        val imm: InputMethodManager? = context?.getSystemService()
+        imm?.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
     private fun updateView(currentItem: AlarmItem) {
         binding.temporaryTimePicker.setTime(currentItem.getHour(), currentItem.getMinute())
-        binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString()
-        binding.descriptionValue.text = currentItem.name
+        binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString(requireContext())
+        binding.descriptionEditText.setText(currentItem.name)
         binding.soundValue.text = currentItem.melody.getMelodyTitle(requireContext())
     }
 
@@ -121,50 +139,20 @@ class EditFragment : Fragment() {
         }
     }
 
-    //todo make it better
-    private fun buildDescriptionDialog() {
-        val dialog = Dialog(requireContext())
-        val dialogBinding = InputTextLayoutBinding.inflate(dialog.layoutInflater)
-        dialog.apply {
-            val height = resources.getDimension(R.dimen.descriptionDialogHeight).toInt()
-            setContentView(dialogBinding.root)
-            window?.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, height)
-            window?.setGravity(Gravity.BOTTOM)
+    @SuppressLint("ClickableViewAccessibility")
+    fun setupTextHide(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                v.clearFocus()
+                hideKeyboard()
+                false
+            }
         }
-        dialogBinding.descriptionDoneButton.setOnClickListener {
-            currentItem.name = dialogBinding.editText.text.toString()
-            binding.descriptionValue.text = currentItem.name
-            dialog.hide()
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupTextHide(innerView)
+            }
         }
-        dialogBinding.descriptionCancelButton.setOnClickListener { dialog.hide() }
-        dialogBinding.editText.text.append(currentItem.name)
-        dialog.show()
-    }
-
-    //todo make it better(recyclerview)
-    private fun buildDayChooseDialog() {
-        val dialog = Dialog(requireContext())
-        val dialogBinding = DayChooseLayout2Binding.inflate(dialog.layoutInflater)
-        dialog.apply {
-            val height = resources.getDimension(R.dimen.dayChooseDialogHeight).toInt()
-            setContentView(dialogBinding.root)
-            window?.setLayout(ConstraintLayout.LayoutParams.MATCH_PARENT, height)
-            window?.setGravity(Gravity.BOTTOM)
-        }
-        dialogBinding.dayChooseDoneButton.setOnClickListener {
-            currentItem.repeatPeriod = mutableListOf()
-            if (dialogBinding.mondayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.MONDAY)
-            if (dialogBinding.tuesdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.TUESDAY)
-            if (dialogBinding.wednesdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.WEDNESDAY)
-            if (dialogBinding.thursdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.THURSDAY)
-            if (dialogBinding.fridayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.FRIDAY)
-            if (dialogBinding.saturdayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.SATURDAY)
-            if (dialogBinding.sundayCheckbox.isChecked) currentItem.repeatPeriod.add(AlarmRepeat.SUNDAY)
-            if (currentItem.repeatPeriod.isEmpty()) currentItem.repeatPeriod.add(AlarmRepeat.NONE)
-            binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString()
-            dialog.hide()
-        }
-        dialogBinding.dayChooseCancelButton.setOnClickListener { dialog.hide() }
-        dialog.show()
     }
 }

@@ -13,17 +13,6 @@ fun AlarmItem.toIntent(action: String) = Intent().apply {
 
 fun Intent.getAlarmItem() = this.getSerializableExtra(ITEM_EXTRA) as AlarmItem?
 
-fun Byte.toDayString(): CharSequence? = when (this) {
-    REPEAT_MONDAY -> "M"
-    REPEAT_TUESDAY -> "T"
-    REPEAT_WEDNESDAY -> "W"
-    REPEAT_THURSDAY -> "T"
-    REPEAT_FRIDAY -> "F"
-    REPEAT_SATURDAY -> "S"
-    REPEAT_SUNDAY -> "S"
-    else -> ""
-}
-
 fun Long.toTimeString(): String {
     val hoursString = "${this / 60}"
     val minutes = this % 60
@@ -61,52 +50,11 @@ fun AlarmRepeat.toCalendarDayOfWeek(): Int = when (this) {
 }
 
 
-fun List<AlarmRepeat>.toRepeatString(): CharSequence? {
+fun List<AlarmRepeat>.toRepeatString(context: Context): CharSequence? {
     var finalString = ""
-    var count = 0
-    for (i in this) {
-        when (i) {
-            AlarmRepeat.MONDAY -> {
-                finalString += "M"
-                count++
-            }
-            AlarmRepeat.TUESDAY -> {
-                if (count > 0) finalString += ", "
-                finalString += "T"
-                count++
-            }
-            AlarmRepeat.WEDNESDAY -> {
-                if (count > 0) finalString += ", "
-                finalString += "W"
-                count++
-            }
-            AlarmRepeat.THURSDAY -> {
-                if (count > 0) finalString += ", "
-                finalString += "T"
-                count++
-            }
-            AlarmRepeat.FRIDAY -> {
-                if (count > 0) finalString += ", "
-                finalString += "F"
-                count++
-            }
-            AlarmRepeat.SATURDAY -> {
-                if (count > 0) finalString += ", "
-                finalString += "S"
-                count++
-            }
-            AlarmRepeat.SUNDAY -> {
-                if (count > 0) finalString += ", "
-                finalString += "S"
-                count++
-            }
-            AlarmRepeat.NONE -> {
-                finalString += "No repeat"
-            }
-            AlarmRepeat.ONCE_DESTROY -> {
-                finalString += "Snooze"
-            }
-        }
+    for ((count, i) in this.withIndex()) {
+        if (count > 0) finalString += ", "
+        finalString += context.resources.getString(i.abbreviationText)
     }
     return finalString
 }

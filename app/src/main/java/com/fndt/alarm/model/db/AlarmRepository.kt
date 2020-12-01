@@ -31,7 +31,7 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
 
     suspend fun wipeData() = withContext(Dispatchers.IO) { alarmItemDao.wipeTable() }
 
-    suspend fun remove(item: AlarmItem) = withContext(Dispatchers.IO) { alarmItemDao.remove(item.id) }
+    suspend fun remove(item: AlarmItem) = withContext(Dispatchers.IO) { alarmItemDao.remove(item) }
 
     private fun getNextEnabledItem(items: List<AlarmItem>): NextAlarmItem? = items.getTimedList().findClosestItem()
 

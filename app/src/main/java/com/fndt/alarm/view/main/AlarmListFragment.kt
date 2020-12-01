@@ -45,8 +45,7 @@ class AlarmListFragment : Fragment() {
         }
         binding.alarmList.apply {
             val decor = DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
-                ContextCompat.getDrawable(requireContext(), R.drawable.alarm_list_divider)
-                    ?.let { setDrawable(it) }
+                ContextCompat.getDrawable(requireContext(), R.drawable.alarm_list_divider)?.let { setDrawable(it) }
             }
             addItemDecoration(decor)
             adapter = listAdapter

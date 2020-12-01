@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 is AlarmStatus.EditStatus -> navigateTo(R.id.alarm_list, R.id.to_add_fragment)
             }
         }
-        viewModel.alarmRequest.observe(this) { item ->
+        viewModel.addAlarmRequest.observe(this) { item ->
             item ?: return@observe
             val event = Intent(INTENT_ADD_ALARM).apply {
                 putExtra(BUNDLE_EXTRA, Bundle().apply { putSerializable(ITEM_EXTRA, item) })

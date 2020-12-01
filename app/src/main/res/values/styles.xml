@@ -5,4 +5,13 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="TimePickerTheme" parent="android:Widget.Material.TimePicker">
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+    </style>
+
+    <style name="SwitchStyle">
+        <item name="colorControlHighlight">@android:color/transparent</item>
+    </style>
 </resources>

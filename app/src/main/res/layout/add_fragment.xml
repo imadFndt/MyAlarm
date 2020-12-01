@@ -81,26 +81,29 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/time_layout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@id/repeat_layout"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.39">
+            app:layout_constraintVertical_bias="0.4">
 
             <TimePicker
                 android:id="@+id/temporary_time_picker"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:numbersTextColor="@color/alarmTimeTextColor"
+                android:layout_height="wrap_content"
+                android:paddingVertical="17dp"
+                android:scaleX="1.5"
+                android:scaleY="1.5"
+                android:theme="@style/TimePickerTheme"
                 android:timePickerMode="spinner"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/repeat_layout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            app:layout_constraintBottom_toTopOf="@id/day_choose"
+            app:layout_constraintBottom_toTopOf="@id/sound_layout"
             app:layout_constraintTop_toBottomOf="@id/time_layout">
 
             <TextView
@@ -145,15 +148,6 @@
                 app:tint="@color/alarmTimeTextColor" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <include
-            android:id="@+id/day_choose"
-            layout="@layout/day_choose_layout"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/divider_repeat_sound"
-            app:layout_constraintTop_toBottomOf="@id/repeat_layout" />
-
         <ImageView
             android:id="@+id/divider_repeat_sound"
             android:layout_width="match_parent"
@@ -161,7 +155,7 @@
             android:contentDescription="@string/divider"
             android:src="@drawable/alarm_list_divider"
             app:layout_constraintBottom_toTopOf="@id/sound_layout"
-            app:layout_constraintTop_toBottomOf="@id/day_choose" />
+            app:layout_constraintTop_toBottomOf="@id/repeat_layout" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sound_layout"
@@ -225,49 +219,27 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/description_layout"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="65dp"
             app:layout_constraintTop_toBottomOf="@id/divider_sound_desc"
             tools:layout_editor_absoluteX="0dp">
 
-            <TextView
-                android:id="@+id/description_text"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/description_input_layout"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/marginBasic"
-                android:text="@string/description"
-                android:textColor="@color/alarmTimeTextColor"
-                android:textSize="@dimen/add_fragment_title_text_size"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="1dp"
+                android:hint="@string/add_some_description"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/description_value"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_start_value"
-                android:layout_marginEnd="@dimen/margin_end_value"
-                android:textAlignment="textEnd"
-                android:textColor="@color/alarmNameTextColor"
-                android:textSize="@dimen/add_fragment_desc_text_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/description_arrow"
-                app:layout_constraintStart_toEndOf="@id/description_text"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Some description" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Some description" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <ImageView
-                android:id="@+id/description_arrow"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="@dimen/marginBasic"
-                android:contentDescription="@string/choose_description"
-                android:src="@drawable/ic_baseline_arrow_forward_ios_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/alarmTimeTextColor" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
