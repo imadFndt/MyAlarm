@@ -28,11 +28,7 @@ class DayChooseAdapter :
         holder.binding.dayCheckbox.setOnClickListener {
             currentItem?.let { item ->
                 val pos = holder.adapterPosition
-                if (holder.binding.dayCheckbox.isChecked) {
-                    daysActual[pos] = days[pos]
-                } else {
-                    daysActual[pos] = null
-                }
+                daysActual[pos] = if (holder.binding.dayCheckbox.isChecked) days[pos] else null
                 currentItem?.repeatPeriod = daysActual.getPeriod()
                 checkListener?.invoke(item)
             }

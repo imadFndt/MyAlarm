@@ -3,7 +3,7 @@
     <color name="colorPrimary">#7B7DF6</color>
     <color name="colorPrimaryDarker">#7379F5</color>
     <color name="colorPrimaryDark">#DCDCDC</color>
-    <color name="colorAccent">@color/colorPrimary</color>
+    <color name="colorAccent">@android:color/transparent</color>
     <color name="backgroundColorOff">#FAFAFA</color>
     <color name="backgroundColorOut">#F0F0F0</color>
     <color name="switchTrackColorOff">#E1E6F3</color>
