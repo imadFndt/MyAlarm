@@ -2,6 +2,7 @@ package com.fndt.alarm.view.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
 import com.fndt.alarm.model.NextAlarmItem
-import com.fndt.alarm.model.util.INTENT_ADD_ALARM
-import com.fndt.alarm.model.util.ITEM_EXTRA
-import com.fndt.alarm.model.util.toExtendedTimeString
+import com.fndt.alarm.model.util.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -37,8 +36,16 @@ class AlarmListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val onGestureListener = AlarmItemGestureListener()
+        onGestureListener.singleTapCallback = { viewModel.editItem(it) }
+        onGestureListener.longPressedCallback =
+            { item -> item?.let { viewModel.removeAlarm(it.toIntent(INTENT_REMOVE_ALARM)) } }
+        val gestureDetector = GestureDetector(context, onGestureListener)
         val listAdapter = AlarmListAdapter()
-        listAdapter.itemClickListener = { viewModel.editItem(it) }
+        listAdapter.itemTouchListener = { item, event ->
+            onGestureListener.currentItem = item
+            gestureDetector.onTouchEvent(event)
+        }
         listAdapter.itemSwitchClickListener = { item ->
             item.isActive = !item.isActive
             viewModel.addAlarm(Intent(INTENT_ADD_ALARM).putExtra(ITEM_EXTRA, item))

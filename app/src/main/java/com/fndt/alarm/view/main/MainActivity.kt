@@ -1,6 +1,5 @@
 package com.fndt.alarm.view.main
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -8,9 +7,6 @@ import androidx.navigation.findNavController
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.MainActivityBinding
 import com.fndt.alarm.model.util.AlarmApplication
-import com.fndt.alarm.model.util.BUNDLE_EXTRA
-import com.fndt.alarm.model.util.INTENT_ADD_ALARM
-import com.fndt.alarm.model.util.ITEM_EXTRA
 import com.fndt.alarm.view.main.MainActivityViewModel.AlarmStatus
 
 class MainActivity : AppCompatActivity() {
@@ -29,13 +25,6 @@ class MainActivity : AppCompatActivity() {
                 is AlarmStatus.Idle -> navigateTo(R.id.add_fragment, R.id.to_list_fragment)
                 is AlarmStatus.EditStatus -> navigateTo(R.id.alarm_list, R.id.to_add_fragment)
             }
-        }
-        viewModel.addAlarmRequest.observe(this) { item ->
-            item ?: return@observe
-            val event = Intent(INTENT_ADD_ALARM).apply {
-                putExtra(BUNDLE_EXTRA, Bundle().apply { putSerializable(ITEM_EXTRA, item) })
-            }
-            viewModel.sendEvent(event)
         }
     }
 

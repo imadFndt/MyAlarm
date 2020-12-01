@@ -1,6 +1,8 @@
 package com.fndt.alarm.view.main
 
+import android.view.GestureDetector
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +13,7 @@ import com.fndt.alarm.model.util.toRepeatString
 import com.fndt.alarm.model.util.toTimeString
 
 class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>() {
-    var itemClickListener: ((AlarmItem) -> Unit)? = null
+    var itemTouchListener: ((AlarmItem, MotionEvent) -> Unit)? = null
     var itemSwitchClickListener: ((AlarmItem) -> Unit)? = null
 
     private val items: MutableList<AlarmItem> = mutableListOf()
@@ -20,7 +22,13 @@ class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>(
         val inflater = LayoutInflater.from(parent.context)
         val binding = AlarmItemBinding.inflate(inflater, parent, false)
         val holder = AlarmViewHolder(binding)
-        holder.itemView.setOnClickListener { itemClickListener?.invoke(items[holder.adapterPosition]) }
+        holder.itemView.setOnTouchListener { v, event ->
+            val pos = holder.adapterPosition
+            if (pos != RecyclerView.NO_POSITION) itemTouchListener?.invoke(items[pos], event)
+            v.performClick()
+            return@setOnTouchListener true
+        }
+        //holder.itemView.setOnClickListener { itemTouchListener?.invoke(items[holder.adapterPosition]) }
         holder.binding.alarmSwitch.setOnClickListener { itemSwitchClickListener?.invoke(items[holder.adapterPosition]) }
         return holder
     }

@@ -44,6 +44,7 @@ class AlarmControl @Inject constructor(
     suspend fun handleEventAsync(intent: Intent) {
         val item = intent.getAlarmItem()
         item ?: return
+        Log.d("AlarmControl", "Received async event ${intent.action}")
         when (intent.action) {
             INTENT_ADD_ALARM -> repository.addItem(item)
             INTENT_REMOVE_ALARM -> repository.remove(item)
@@ -53,7 +54,7 @@ class AlarmControl @Inject constructor(
     fun handleEventSync(intent: Intent) {
         val item = intent.getAlarmItem()
         item ?: return
-        Log.d("AlarmControl", "Received event ${intent.action}")
+        Log.d("AlarmControl", "Received sync event ${intent.action}")
         when (intent.action) {
             INTENT_FIRE_ALARM -> fireAlarm(item)
             INTENT_SNOOZE_ALARM -> snoozeAlarm(item)

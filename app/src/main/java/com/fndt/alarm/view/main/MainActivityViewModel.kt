@@ -10,13 +10,11 @@ import kotlinx.coroutines.launch
 class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
     val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     val status: LiveData<AlarmStatus> get() = statusData
-    val addAlarmRequest: LiveData<AlarmItem> get() = addAlarmRequestData
     val nextAlarm: LiveData<NextAlarmItem?> get() = control.nextAlarm
     val itemEdited: LiveData<AlarmItem> get() = itemEditedData
 
     private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
     private val statusData: MutableLiveData<AlarmStatus> = MutableLiveData(AlarmStatus.Idle)
-    private val addAlarmRequestData: MutableLiveData<AlarmItem> = MutableLiveData()
     private val itemEditedData: MutableLiveData<AlarmItem> = MutableLiveData()
 
     private val repositoryObserver = Observer<List<AlarmItem>> { alarmListData.postValue(it) }
@@ -26,8 +24,16 @@ class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
     }
 
     fun addAlarm(event: Intent) {
-        viewModelScope.launch { control.handleEventAsync(event) }
+        sendAsync(event)
         statusData.value = AlarmStatus.Idle
+    }
+
+    fun removeAlarm(event: Intent) {
+        sendAsync(event)
+    }
+
+    private fun sendAsync(event: Intent) {
+        viewModelScope.launch { control.handleEventAsync(event) }
     }
 
     fun editItem(item: AlarmItem?) {
