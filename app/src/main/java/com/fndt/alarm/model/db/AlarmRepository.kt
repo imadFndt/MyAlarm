@@ -25,7 +25,7 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
 
     suspend fun addItem(alarmItem: AlarmItem) =
         withContext(Dispatchers.IO) {
-            Log.d("REPOSITORY", "Add item ${alarmItem.name} at ${alarmItem.time.toTimeString()}")
+            Log.d("Repository", "Add item ${alarmItem.name} at ${alarmItem.time.toTimeString()}")
             alarmItemDao.insert(alarmItem)
         }
 

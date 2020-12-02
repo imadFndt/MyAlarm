@@ -8,8 +8,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.util.Log
 import androidx.core.content.getSystemService
-import com.fndt.alarm.model.AlarmItem.Companion.getMelodyTitle
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -39,14 +39,15 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
         null
     }
 
-    fun alarm(alarmItem: AlarmItem) {
+    fun alarm(alarmItem: AlarmItem, ccontext: Context) {
+        Log.d("AlarmPlayer", "Playing alarm")
         if (isPlaying) {
             player.release()
             vibrator?.cancel()
         }
-        player = getPlayer()
+        player = getPlayer(ccontext)
         val dataSourceFactory = DefaultDataSourceFactory(
-            context, Util.getUserAgent(context, "task5"), null
+            ccontext, Util.getUserAgent(ccontext, "task5"), null
         )
         val source = LoopingMediaSource(
             ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(
@@ -61,6 +62,7 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
     }
 
     fun stop() {
+        Log.d("AlarmPlayer", "Stop playing alarm")
         player.playWhenReady = false
         player.release()
         vibrator?.cancel()
@@ -98,10 +100,10 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
         }
     }
 
-    private fun getPlayer() = SimpleExoPlayer.Builder(context).build().apply {
+    private fun getPlayer(context: Context) = SimpleExoPlayer.Builder(context).build().apply {
         setAudioAttributes(
             AudioAttributes.Builder()
-                .setContentType(C.CONTENT_TYPE_MUSIC)
+                .setContentType(C.CONTENT_TYPE_SONIFICATION)
                 .setUsage(C.USAGE_ALARM)
                 .build(),
             false

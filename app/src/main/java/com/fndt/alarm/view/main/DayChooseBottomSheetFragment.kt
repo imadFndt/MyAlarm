@@ -28,9 +28,7 @@ class DayChooseBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val adapter = DayChooseAdapter()
         binding.daysRecycler.adapter = adapter
-        adapter.checkListener = {
-            viewModel.updateEditedItem(it)
-        }
+        adapter.checkListener = { viewModel.updateEditedItem(it) }
         viewModel.itemEdited.observe(viewLifecycleOwner) { adapter.updateCurrentItem(it) }
     }
 

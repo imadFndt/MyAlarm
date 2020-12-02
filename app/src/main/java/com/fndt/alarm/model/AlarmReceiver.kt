@@ -13,9 +13,12 @@ class AlarmReceiver : BroadcastReceiver() {
     lateinit var control: AlarmControl
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.e("RECEIVED", "EVENT ${intent.action}")
+        Log.d("Received", "Event ${intent.action}")
         (context.applicationContext as AlarmApplication).component.inject(this)
-        control.handleEventSync(intent.transformToRegularIntent())
+        when (intent.action) {
+            INTENT_FIRE_ALARM -> control.handleEventSync(intent.transformToRegularIntent())
+            INTENT_STOP_ALARM, INTENT_SNOOZE_ALARM -> control.handleEventSync(intent)
+        }
     }
 
     private fun Intent.transformToRegularIntent(): Intent {

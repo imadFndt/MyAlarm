@@ -31,4 +31,6 @@
     <string name="friday_short">Fri</string>
     <string name="saturday_short">Sat</string>
     <string name="sunday_short">Sun</string>
+    <string name="alarm">Alarm!!!</string>
+    <string name="less_minute">Less than a minute</string>
 </resources>

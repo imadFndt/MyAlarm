@@ -44,10 +44,6 @@ class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
         statusData.value = AlarmStatus.Idle
     }
 
-    fun sendEvent(event: Intent) {
-        control.handleEventSync(event)
-    }
-
     fun updateEditedItem(alarmItem: AlarmItem) {
         itemEditedData.value = alarmItem
     }

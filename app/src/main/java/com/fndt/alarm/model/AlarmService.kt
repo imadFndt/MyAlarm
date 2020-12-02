@@ -8,7 +8,7 @@ import com.fndt.alarm.model.NotificationProvider.Companion.NOTIFICATION_ID
 import com.fndt.alarm.model.util.AlarmApplication
 import com.fndt.alarm.model.util.INTENT_FIRE_ALARM
 import com.fndt.alarm.model.util.INTENT_STOP_ALARM
-import com.fndt.alarm.model.util.ITEM_EXTRA
+import com.fndt.alarm.model.util.getAlarmItem
 import javax.inject.Inject
 
 class AlarmService : Service() {
@@ -22,45 +22,46 @@ class AlarmService : Service() {
     @Inject
     lateinit var notificationProvider: NotificationProvider
 
+    private var isForegroundService = false
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
         (application as AlarmApplication).component.inject(this)
-        alarmControl.onServiceCreate()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("SERVICE", "NEW INTENT WITH $intent")
+        Log.d("AlarmService", "New intent with $intent")
         intent?.let {
             when (intent.action) {
-                INTENT_FIRE_ALARM -> alarm(intent.getSerializableExtra(ITEM_EXTRA) as AlarmItem)
-                INTENT_STOP_ALARM -> stop(intent.getSerializableExtra(ITEM_EXTRA) as AlarmItem)
+                INTENT_FIRE_ALARM -> intent.getAlarmItem()?.let { item -> alarm(item) }
+                INTENT_STOP_ALARM -> intent.getAlarmItem()?.let { item -> stop(item) }
+                else -> Unit
             }
         }
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     private fun alarm(alarmItem: AlarmItem) {
-        Log.e("SERIVCE FIRE", "EVENT ${alarmItem.id}")
-        startForeground(NOTIFICATION_ID, notify(alarmItem))
-        playSound(alarmItem)
+        Log.d("AlarmService", "Event ${alarmItem.id}")
+        alarmControl.acquireWakeLock()
+        if (!isForegroundService) {
+            isForegroundService = true
+            startForeground(NOTIFICATION_ID, notify(alarmItem))
+            player.alarm(alarmItem, this)
+        }
     }
 
     private fun stop(alarmItem: AlarmItem) {
-        Log.e("SERVICE", "STOP ${alarmItem.id}")
+        alarmControl.releaseWakeLock()
+        isForegroundService = false
+        Log.d("AlarmService", "Stop ${alarmItem.id}")
         stopForeground(true)
-        stopAlarm()
-    }
-
-    private fun playSound(alarmItem: AlarmItem) {
-        player.alarm(alarmItem)
+        notificationProvider.cancelNotification()
+        player.stop()
     }
 
     private fun notify(alarmItem: AlarmItem) = notificationProvider.notify(alarmItem)
 
-    private fun stopAlarm() {
-        notificationProvider.cancelNotification()
-        player.stop()
-    }
 }
