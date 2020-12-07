@@ -1,6 +1,5 @@
 package com.fndt.alarm.view.main
 
-import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
@@ -28,8 +27,6 @@ class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>(
             v.performClick()
             return@setOnTouchListener true
         }
-        //holder.itemView.setOnClickListener { itemTouchListener?.invoke(items[holder.adapterPosition]) }
-        holder.binding.alarmSwitch.setOnClickListener { itemSwitchClickListener?.invoke(items[holder.adapterPosition]) }
         return holder
     }
 
@@ -43,8 +40,11 @@ class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>(
                     R.string.item_list_title, item.name, item.repeatPeriod.toRepeatString(holder.itemView.context)
                 )
             }
-
+            holder.binding.alarmSwitch.setOnCheckedChangeListener(null)
             if (alarmSwitch.isChecked != item.isActive) alarmSwitch.isChecked = item.isActive
+            holder.binding.alarmSwitch.setOnCheckedChangeListener { _, _ ->
+                itemSwitchClickListener?.invoke(items[holder.adapterPosition])
+            }
             alarmTime.text = item.time.toTimeString()
         }
     }

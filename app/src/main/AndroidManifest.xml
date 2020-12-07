@@ -33,7 +33,7 @@
         <activity
             android:name=".view.AlarmActivity"
             android:exported="false"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="sensorPortrait"
             android:showOnLockScreen="true" />
 

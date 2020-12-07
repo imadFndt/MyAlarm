@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmActivityBinding
 import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.model.AlarmReceiver
 import com.fndt.alarm.model.util.*
 
 
@@ -36,13 +37,14 @@ class AlarmActivity : AppCompatActivity() {
 
         turnScreenOnAndKeyguardOff()
 
-        //TODO CALL RECEIVER
         binding.turnoffButton.setOnClickListener {
-            currentItem?.toIntent(INTENT_STOP_ALARM)?.let { viewModel.handleEvent(it) }
+            currentItem?.toIntent(INTENT_STOP_ALARM)?.setClass(this, AlarmReceiver::class.java)
+                ?.let { sendBroadcast(it) }
             finish()
         }
         binding.snoozeButton.setOnClickListener {
-            currentItem?.toIntent(INTENT_SNOOZE_ALARM)?.let { viewModel.handleEvent(it) }
+            currentItem?.toIntent(INTENT_SNOOZE_ALARM)?.setClass(this, AlarmReceiver::class.java)
+                ?.let { sendBroadcast(it) }
             finish()
         }
     }
