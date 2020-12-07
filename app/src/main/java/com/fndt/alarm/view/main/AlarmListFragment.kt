@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
+import com.fndt.alarm.model.AlarmRepeat
 import com.fndt.alarm.model.NextAlarmItem
 import com.fndt.alarm.model.util.*
 import kotlinx.coroutines.*
@@ -48,7 +49,11 @@ class AlarmListFragment : Fragment() {
         }
         listAdapter.itemSwitchClickListener = { item ->
             item.isActive = !item.isActive
-            viewModel.addAlarm(Intent(INTENT_ADD_ALARM).putExtra(ITEM_EXTRA, item))
+            if (item.repeatPeriod.contains(AlarmRepeat.ONCE_DESTROY)) {
+                viewModel.removeAlarm(Intent(INTENT_REMOVE_ALARM).putExtra(ITEM_EXTRA, item))
+            } else {
+                viewModel.addAlarm(Intent(INTENT_ADD_ALARM).putExtra(ITEM_EXTRA, item))
+            }
         }
         binding.alarmList.apply {
             val decor = DividerItemDecoration(context, DividerItemDecoration.VERTICAL).apply {
