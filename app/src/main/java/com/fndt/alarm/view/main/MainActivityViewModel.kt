@@ -2,7 +2,6 @@ package com.fndt.alarm.view.main
 
 import androidx.lifecycle.*
 import com.fndt.alarm.model.AlarmControl
-import com.fndt.alarm.model.AlarmDataProvider
 import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.NextAlarmItem
 import kotlinx.coroutines.launch
