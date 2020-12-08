@@ -1,8 +1,8 @@
 package com.fndt.alarm.view.main
 
-import android.content.Intent
 import androidx.lifecycle.*
 import com.fndt.alarm.model.AlarmControl
+import com.fndt.alarm.model.AlarmDataProvider
 import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.NextAlarmItem
 import kotlinx.coroutines.launch
@@ -23,17 +23,13 @@ class MainActivityViewModel(private val control: AlarmControl) : ViewModel() {
         control.alarmList.observeForever(repositoryObserver)
     }
 
-    fun addAlarm(event: Intent) {
-        sendAsync(event)
+    fun addAlarm(item: AlarmItem) {
+        viewModelScope.launch { control.addItem(item) }
         statusData.value = AlarmStatus.Idle
     }
 
-    fun removeAlarm(event: Intent) {
-        sendAsync(event)
-    }
-
-    private fun sendAsync(event: Intent) {
-        viewModelScope.launch { control.handleEventAsync(event) }
+    fun removeAlarm(item: AlarmItem) {
+        viewModelScope.launch { control.removeItem(item) }
     }
 
     fun editItem(item: AlarmItem?) {

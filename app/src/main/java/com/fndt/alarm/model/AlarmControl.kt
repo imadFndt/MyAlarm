@@ -20,8 +20,8 @@ class AlarmControl @Inject constructor(
     private var context: Context?,
     private val alarmSetup: AlarmSetup,
     private val wakelockProvider: WakelockProvider,
-    private val repository: AlarmRepository
-) {
+    var repository: AlarmRepository
+) : AlarmEventHandler {
     private val repositoryScope = MainScope()
 
     val alarmList: LiveData<List<AlarmItem>> get() = repository.alarmList
@@ -49,17 +49,7 @@ class AlarmControl @Inject constructor(
         wakelockProvider.releaseServiceLock()
     }
 
-    suspend fun handleEventAsync(intent: Intent) {
-        Log.d("AlarmControl", "Received async event ${intent.action}")
-        val item = intent.getAlarmItem()
-        item ?: return
-        when (intent.action) {
-            INTENT_ADD_ALARM -> repository.addItem(item)
-            INTENT_REMOVE_ALARM -> repository.remove(item)
-        }
-    }
-
-    fun handleEventSync(intent: Intent) {
+    override fun handleEvent(intent: Intent) {
         Log.d("AlarmControl", "Received sync event ${intent.action}")
         val item = intent.getAlarmItem()
         item ?: return
@@ -70,14 +60,22 @@ class AlarmControl @Inject constructor(
         }
     }
 
+    suspend fun addItem(item: AlarmItem) {
+        repository.addItem(item)
+    }
+
+    suspend fun removeItem(item: AlarmItem) {
+        repository.removeItem(item)
+    }
+
     private fun fireAlarm(item: AlarmItem) {
         Log.d("AlarmControl", "fireAlarm(${item.id})")
         if (item.repeatPeriod.contains(AlarmRepeat.NONE)) item.isActive = !item.isActive
         repositoryScope.launch {
             if (item.repeatPeriod.contains(AlarmRepeat.ONCE_DESTROY)) {
-                handleEventAsync(item.toIntent(INTENT_REMOVE_ALARM))
+                repository.removeItem(item)
             } else {
-                handleEventAsync(item.toIntent(INTENT_ADD_ALARM))
+                repository.addItem(item)
             }
         }
         alarmingItemData.value = item
@@ -94,10 +92,10 @@ class AlarmControl @Inject constructor(
         alarmingItemData.value = null
     }
 
-    private fun Context?.startService(intentAction: String, alarmItem: AlarmItem) {
+    private fun Context.startService(intentAction: String, alarmItem: AlarmItem) {
         val serviceIntent =
-            Intent(context, AlarmService::class.java).putExtra(ITEM_EXTRA, alarmItem).setAction(intentAction)
-        this?.let { ContextCompat.startForegroundService(it, serviceIntent) }
+            alarmItem.toIntent(intentAction).setClass(this, AlarmService::class.java)
+        ContextCompat.startForegroundService(this, serviceIntent)
     }
 
     fun clear() {

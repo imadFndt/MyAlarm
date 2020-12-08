@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.PowerManager
 import androidx.core.content.getSystemService
 import com.fndt.alarm.model.AlarmControl
+import com.fndt.alarm.model.AlarmEventHandler
 import com.fndt.alarm.model.db.AlarmDatabase
 import com.fndt.alarm.view.AlarmViewModel
 import com.fndt.alarm.view.main.MainActivityViewModel
@@ -28,5 +29,8 @@ class AlarmModule(private val context: Context) {
 
     @Provides
     fun powerManager() = context.getSystemService() as PowerManager?
+
+    @Provides
+    fun alarmHandler(control: AlarmControl): AlarmEventHandler = control
 
 }

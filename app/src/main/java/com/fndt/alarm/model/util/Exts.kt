@@ -2,17 +2,21 @@ package com.fndt.alarm.model.util
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import com.fndt.alarm.R
 import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.AlarmRepeat
 import java.util.*
 
-fun AlarmItem.toIntent(action: String) = Intent().apply {
-    setAction(action)
-    putExtra(ITEM_EXTRA, this@toIntent)
+
+fun AlarmItem.toIntent(action: String) = Intent(action).apply {
+    putExtra(BUNDLE_EXTRA, Bundle().apply { putByteArray(BYTE_ITEM_EXTRA, this@toIntent.toByteArray()) })
 }
 
-fun Intent.getAlarmItem() = this.getSerializableExtra(ITEM_EXTRA) as AlarmItem?
+fun Intent.getAlarmItem(): AlarmItem? = AlarmItem.fromByteArray(
+    this.getBundleExtra(BUNDLE_EXTRA)?.getSerializable(BYTE_ITEM_EXTRA) as ByteArray
+)
+
 
 fun Long.toTimeString(): String {
     val hoursString = "${this / 60}"

@@ -21,7 +21,6 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
         get() = alarmItemDao.getAll()
     val nextAlarm: LiveData<NextAlarmItem?>
         get() = alarmItemDao.getEnabled().switchMap { MutableLiveData(getNextEnabledItem(it)) }
-    var alarm: (() -> Unit)? = null
 
     suspend fun addItem(alarmItem: AlarmItem) =
         withContext(Dispatchers.IO) {
@@ -29,9 +28,7 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
             alarmItemDao.insert(alarmItem)
         }
 
-    suspend fun wipeData() = withContext(Dispatchers.IO) { alarmItemDao.wipeTable() }
-
-    suspend fun remove(item: AlarmItem) = withContext(Dispatchers.IO) { alarmItemDao.remove(item) }
+    suspend fun removeItem(item: AlarmItem) = withContext(Dispatchers.IO) { alarmItemDao.remove(item) }
 
     private fun getNextEnabledItem(items: List<AlarmItem>): NextAlarmItem? = items.getTimedList().findClosestItem()
 
