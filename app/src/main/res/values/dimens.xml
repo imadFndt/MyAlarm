@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="switch_track_height">30dp</dimen>
+    <dimen name="switch_thumb_radius">15dp</dimen>
+    <dimen name="switch_thumb_padding">2dp</dimen>
+    <dimen name="marginBasic">15dp</dimen>
+    <dimen name="descriptionDialogHeight">165dp</dimen>
+    <dimen name="dayChooseDialogHeight">400dp</dimen>
+    <dimen name="add_fragment_title_text_size">20sp</dimen>
+    <dimen name="add_fragment_desc_text_size">15sp</dimen>
+    <dimen name="margin_start_value">10dp</dimen>
+    <dimen name="margin_end_value">12dp</dimen>
+</resources>

@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">Alarm</string>
+    <string name="add_alarm">Add alarm</string>
+    <string name="repeat">Repeat</string>
+    <string name="sound">Sound</string>
+    <string name="item_list_title">%s, %s</string>
+    <string name="default_alarm_name">"Alarm!"</string>
+    <string name="description">Description</string>
+    <string name="choose_description">Choose description</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="turn_off">Turn off</string>
+    <string name="divider">Divider</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="nothing_set">Nothing set</string>
+    <string name="days_remaining">%s days</string>
+    <string name="day_remaining">%s day</string>
+    <string name="snooze">Snooze</string>
+    <string name="add_some_description">Add some description</string>
+    <string name="non_repeatable">Non repeatable</string>
+    <string name="monday_short">Mon</string>
+    <string name="tuesday_short">Tue</string>
+    <string name="wednesday_short">Wed</string>
+    <string name="thursday_short">Th</string>
+    <string name="friday_short">Fri</string>
+    <string name="saturday_short">Sat</string>
+    <string name="sunday_short">Sun</string>
+    <string name="alarm">Alarm!!!</string>
+    <string name="less_minute">Less than a minute</string>
 </resources>

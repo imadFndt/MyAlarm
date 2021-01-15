@@ -5,25 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="80dp">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/alarm_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:checked="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:showText="false"
-        app:thumbTint="@color/switchThumbColor"
-        app:track="@drawable/custom_track" />
-
     <TextView
         android:id="@+id/alarm_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="@dimen/marginBasic"
+        android:layout_marginBottom="25dp"
         android:textColor="@color/alarmTimeTextColor"
         android:textSize="40sp"
         android:textStyle="bold"
@@ -36,12 +23,26 @@
         android:id="@+id/alarm_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="@dimen/marginBasic"
         android:layout_marginBottom="8dp"
         android:textColor="@color/alarmNameTextColor"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/alarm_time"
         tools:text="Alarm!!!" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/alarm_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:checked="true"
+        android:theme="@style/SwitchStyle"
+        android:thumb="@drawable/custom_thumb"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:thumbTint="@color/switchThumbColor"
+        app:track="@drawable/custom_track" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,13 +2,19 @@
 <resources>
     <color name="colorPrimary">#7B7DF6</color>
     <color name="colorPrimaryDarker">#7379F5</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimaryDark">#DCDCDC</color>
+    <color name="colorAccent">@android:color/transparent</color>
+    <color name="backgroundColorOff">#FAFAFA</color>
+    <color name="backgroundColorOut">#F0F0F0</color>
     <color name="switchTrackColorOff">#E1E6F3</color>
+    <color name="backgroundDayChoose">#E1E6F3</color>
     <color name="switchTrackColorOn">@color/colorPrimary</color>
     <color name="switchTrackBorderColorOff">#E1E6F3</color>
     <color name="switchTrackBorderColorOn">@color/colorPrimaryDarker</color>
     <color name="switchThumbColor">#F7FAFC</color>
     <color name="alarmTimeTextColor">#384562</color>
     <color name="alarmNameTextColor">#9FAAC0</color>
+    <color name="alarmListDividerGradEnd">#DDE0E6</color>
+    <color name="alarmListDividerGradStart">#EEF0F6</color>
+    <color name="addAlarmButtonPlusColor">#B9C5DE</color>
 </resources>
