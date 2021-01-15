@@ -29,11 +29,11 @@ class NotificationProvider @Inject constructor(private var context: Context) {
             channel.description = "Alarm channel"
             channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             channel.vibrationPattern = longArrayOf(0, 50)
+            channel.setSound(null, null)
             val notificationManager = context.getSystemService(NotificationManager::class.java)!!
             notificationManager.createNotificationChannel(channel)
         }
         val builder = NotificationCompat.Builder(context, CHANNEL_NAME)
-
 
         val notifyIntent = Intent(context, AlarmActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
@@ -44,17 +44,15 @@ class NotificationProvider @Inject constructor(private var context: Context) {
         val turnoffPendingIntent = PendingIntent.getBroadcast(
             context, TURNOFF_CODE, turnoffIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val turnoffAction = NotificationCompat.Action(
-            0, context.resources.getString(R.string.turn_off), turnoffPendingIntent
-        )
+        val turnoffAction =
+            NotificationCompat.Action(0, context.resources.getString(R.string.turn_off), turnoffPendingIntent)
 
         val snoozeIntent = event.toIntent(INTENT_STOP_ALARM).setClass(context, AlarmReceiver::class.java)
         val snoozePendingIntent = PendingIntent.getBroadcast(
             context, TURNOFF_CODE, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
-        val snoozeAction = NotificationCompat.Action(
-            0, context.resources.getString(R.string.snooze), snoozePendingIntent
-        )
+        val snoozeAction =
+            NotificationCompat.Action(0, context.resources.getString(R.string.snooze), snoozePendingIntent)
 
         return builder.setContentTitle(event.name)
             .setContentText(event.time.toTimeString())
@@ -72,9 +70,7 @@ class NotificationProvider @Inject constructor(private var context: Context) {
     }
 
     private fun NotificationCompat.Builder.setChannelIdIfLowApi(channelName: String) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            setChannelId(channelName)
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) setChannelId(channelName)
     }
 
     private fun NotificationCompat.Builder.setPriorityIfLowApi(priority: Int) {
@@ -85,12 +81,6 @@ class NotificationProvider @Inject constructor(private var context: Context) {
     fun cancelNotification() {
         val mNotificationManager: NotificationManager? = context.getSystemService()
         mNotificationManager?.cancel(NOTIFICATION_ID)
-    }
-
-    private fun getBuilder(context: Context) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        Notification.Builder(context, CHANNEL_NAME)
-    } else {
-        Notification.Builder(context)
     }
 
     companion object {
