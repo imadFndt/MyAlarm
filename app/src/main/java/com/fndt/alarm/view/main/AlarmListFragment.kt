@@ -1,6 +1,5 @@
 package com.fndt.alarm.view.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.LayoutInflater
@@ -14,7 +13,7 @@ import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
 import com.fndt.alarm.model.AlarmRepeat
 import com.fndt.alarm.model.NextAlarmItem
-import com.fndt.alarm.model.util.*
+import com.fndt.alarm.model.util.toExtendedTimeString
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -40,7 +39,7 @@ class AlarmListFragment : Fragment() {
         val onGestureListener = AlarmItemGestureListener()
         onGestureListener.singleTapCallback = { viewModel.editItem(it) }
         onGestureListener.longPressedCallback =
-            { item -> item?.let { viewModel.removeAlarm(it.toIntent(INTENT_REMOVE_ALARM)) } }
+            { item -> item?.let { viewModel.removeAlarm(it) } }
         val gestureDetector = GestureDetector(context, onGestureListener)
         val listAdapter = AlarmListAdapter()
         listAdapter.itemTouchListener = { item, event ->
@@ -50,9 +49,9 @@ class AlarmListFragment : Fragment() {
         listAdapter.itemSwitchClickListener = { item ->
             item.isActive = !item.isActive
             if (item.repeatPeriod.contains(AlarmRepeat.ONCE_DESTROY)) {
-                viewModel.removeAlarm(Intent(INTENT_REMOVE_ALARM).putExtra(ITEM_EXTRA, item))
+                viewModel.removeAlarm(item)
             } else {
-                viewModel.addAlarm(Intent(INTENT_ADD_ALARM).putExtra(ITEM_EXTRA, item))
+                viewModel.addAlarm(item)
             }
         }
         binding.alarmList.apply {

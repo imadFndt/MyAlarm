@@ -49,8 +49,8 @@ class AlarmService : Service() {
         if (!isForegroundService) {
             isForegroundService = true
             startForeground(NOTIFICATION_ID, notify(alarmItem))
-            player.alarm(alarmItem, this)
         }
+        player.alarm(alarmItem)
     }
 
     private fun stop(alarmItem: AlarmItem) {

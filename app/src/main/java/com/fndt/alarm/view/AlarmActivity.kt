@@ -29,9 +29,11 @@ class AlarmActivity : AppCompatActivity() {
         val viewModelFactory = (application as AlarmApplication).component.getAlarmViewModelFactory()
         viewModel = ViewModelProvider(this, viewModelFactory).get(AlarmViewModel::class.java)
         viewModel.alarmingItem.observe(this) { item ->
-            binding.alarmTime.text = item?.time?.toTimeString()
-            binding.alarmName.text = item?.name
-            currentItem = item
+            item?.let {
+                binding.alarmTime.text = item.time.toTimeString()
+                binding.alarmName.text = item.name
+                currentItem = item
+            } ?: run { currentItem?.let { finish() } }
         }
         window.statusBarColor = ContextCompat.getColor(this, R.color.colorPrimary)
 
@@ -40,15 +42,12 @@ class AlarmActivity : AppCompatActivity() {
         binding.turnoffButton.setOnClickListener {
             currentItem?.toIntent(INTENT_STOP_ALARM)?.setClass(this, AlarmReceiver::class.java)
                 ?.let { sendBroadcast(it) }
-            finish()
         }
         binding.snoozeButton.setOnClickListener {
             currentItem?.toIntent(INTENT_SNOOZE_ALARM)?.setClass(this, AlarmReceiver::class.java)
                 ?.let { sendBroadcast(it) }
-            finish()
         }
     }
-
 
     private fun turnScreenOnAndKeyguardOff() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {

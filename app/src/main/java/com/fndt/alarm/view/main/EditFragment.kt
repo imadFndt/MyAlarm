@@ -20,7 +20,10 @@ import com.fndt.alarm.model.AlarmItem
 import com.fndt.alarm.model.AlarmItem.Companion.getMelodyTitle
 import com.fndt.alarm.model.AlarmRepeat
 import com.fndt.alarm.model.defaultAlarmSound
-import com.fndt.alarm.model.util.*
+import com.fndt.alarm.model.util.AlarmApplication
+import com.fndt.alarm.model.util.DAY_CHOOSE_FRAGMENT_TAG
+import com.fndt.alarm.model.util.RINGTONE_REQ_CODE
+import com.fndt.alarm.model.util.toRepeatString
 import java.util.*
 
 
@@ -65,10 +68,7 @@ class EditFragment : Fragment() {
                 currentItem.time = (hourOfDay * 60 + minute).toLong()
             }
         }
-        binding.doneButton.setOnClickListener {
-            val intent = Intent(INTENT_ADD_ALARM).apply { putExtra(ITEM_EXTRA, currentItem) }
-            viewModel.addAlarm(intent)
-        }
+        binding.doneButton.setOnClickListener { viewModel.addAlarm(currentItem) }
         binding.closeButton.setOnClickListener { viewModel.cancelItemUpdate() }
         binding.repeatLayout.setOnClickListener { showDayChooseFragment() }
         binding.descriptionEditText.setOnKeyListener { v, keyCode, event ->
