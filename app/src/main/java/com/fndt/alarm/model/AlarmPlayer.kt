@@ -1,6 +1,7 @@
 package com.fndt.alarm.model
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -25,6 +26,7 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
         }
         ringtone = RingtoneManager.getRingtone(context, Uri.parse(alarmItem.melody))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) ringtone?.isLooping = true
+        ringtone?.audioAttributes = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build()
         ringtone?.play()
         vibrator?.vibrateSDK(vibratorPattern, 0)
     }
