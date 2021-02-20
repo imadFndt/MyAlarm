@@ -7,68 +7,61 @@
     android:animateLayoutChanges="true"
     android:background="@color/backgroundColorOut">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/title_bar"
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/close_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginVertical="16dp"
+        android:layout_marginStart="@dimen/marginBasic"
+        android:backgroundTint="@color/backgroundColorOff"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:shadowColor="@android:color/white"
+        app:icon="@drawable/ic_baseline_close_24"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="24dp"
+        app:iconTint="@color/addAlarmButtonPlusColor"
         app:layout_constraintBottom_toTopOf="@id/alarm_settings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/alarm_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_alarm"
+        android:textColor="@color/alarmTimeTextColor"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/alarm_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/done_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginVertical="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/backgroundColorOff"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:shadowColor="@android:color/white"
+        app:icon="@drawable/ic_baseline_done_24"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp"
+        app:iconSize="24dp"
+        app:iconTint="@color/addAlarmButtonPlusColor"
+        app:layout_constraintBottom_toTopOf="@id/alarm_settings"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.24000001">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/close_button"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="@dimen/marginBasic"
-            android:backgroundTint="@color/backgroundColorOff"
-            android:insetLeft="0dp"
-            android:insetTop="0dp"
-            android:insetRight="0dp"
-            android:insetBottom="0dp"
-            android:shadowColor="@android:color/white"
-            app:icon="@drawable/ic_baseline_close_24"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconSize="24dp"
-            app:iconTint="@color/addAlarmButtonPlusColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/alarm_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_alarm"
-            android:textColor="@color/alarmTimeTextColor"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/done_button"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/backgroundColorOff"
-            android:insetLeft="0dp"
-            android:insetTop="0dp"
-            android:insetRight="0dp"
-            android:insetBottom="0dp"
-            android:shadowColor="@android:color/white"
-            app:icon="@drawable/ic_baseline_done_24"
-            app:iconGravity="textStart"
-            app:iconPadding="0dp"
-            app:iconSize="24dp"
-            app:iconTint="@color/addAlarmButtonPlusColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.487" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintVertical_bias="0.487" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/alarm_settings"
@@ -76,77 +69,65 @@
         android:layout_height="0dp"
         android:background="@drawable/list_border"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_bar">
+        app:layout_constraintTop_toBottomOf="@id/alarm_title">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/time_layout"
+
+        <TimePicker
+            android:id="@+id/temporary_time_picker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/repeat_layout"
+            android:paddingVertical="17dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:theme="@style/TimePickerTheme"
+            android:timePickerMode="spinner"
+            app:layout_constraintBottom_toTopOf="@id/repeat_text"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.4">
+            app:layout_constraintVertical_bias="0"
+            tools:layout_editor_absoluteX="0dp" />
 
-            <TimePicker
-                android:id="@+id/temporary_time_picker"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="17dp"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                android:theme="@style/TimePickerTheme"
-                android:timePickerMode="spinner"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="0dp" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/repeat_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:layout_marginStart="@dimen/marginBasic"
+            android:text="@string/repeat"
+            android:textColor="@color/alarmTimeTextColor"
+            android:textSize="@dimen/add_fragment_title_text_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/divider_repeat_sound"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/temporary_time_picker" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/repeat_layout"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            app:layout_constraintBottom_toTopOf="@id/sound_layout"
-            app:layout_constraintTop_toBottomOf="@id/time_layout">
+        <TextView
+            android:id="@+id/repeat_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="20dp"
+            android:layout_marginStart="@dimen/margin_start_value"
+            android:layout_marginEnd="@dimen/margin_end_value"
+            android:textAlignment="textEnd"
+            android:textColor="@color/alarmNameTextColor"
+            android:textSize="@dimen/add_fragment_desc_text_size"
+            app:layout_constraintBottom_toTopOf="@id/divider_repeat_sound"
+            app:layout_constraintEnd_toStartOf="@id/repeat_arrow"
+            app:layout_constraintStart_toEndOf="@id/repeat_text"
+            app:layout_constraintTop_toBottomOf="@id/temporary_time_picker"
+            tools:text="Some period" />
 
-            <TextView
-                android:id="@+id/repeat_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/marginBasic"
-                android:text="@string/repeat"
-                android:textColor="@color/alarmTimeTextColor"
-                android:textSize="@dimen/add_fragment_title_text_size"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/repeat_value"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_start_value"
-                android:layout_marginEnd="@dimen/margin_end_value"
-                android:textAlignment="textEnd"
-                android:textColor="@color/alarmNameTextColor"
-                android:textSize="@dimen/add_fragment_desc_text_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/repeat_arrow"
-                app:layout_constraintStart_toEndOf="@id/repeat_text"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.512"
-                tools:text="Some period" />
-
-            <ImageView
-                android:id="@+id/repeat_arrow"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="@dimen/marginBasic"
-                android:contentDescription="@string/choose_description"
-                android:src="@drawable/ic_baseline_arrow_forward_ios_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/alarmTimeTextColor" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/repeat_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="@dimen/marginBasic"
+            android:layout_marginVertical="20dp"
+            android:contentDescription="@string/choose_description"
+            android:src="@drawable/ic_baseline_arrow_forward_ios_24"
+            app:layout_constraintBottom_toTopOf="@id/divider_repeat_sound"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/temporary_time_picker"
+            app:tint="@color/alarmTimeTextColor" />
 
         <ImageView
             android:id="@+id/divider_repeat_sound"
@@ -154,58 +135,51 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/divider"
             android:src="@drawable/alarm_list_divider"
-            app:layout_constraintBottom_toTopOf="@id/sound_layout"
-            app:layout_constraintTop_toBottomOf="@id/repeat_layout" />
+            app:layout_constraintBottom_toTopOf="@id/sound_text"
+            app:layout_constraintTop_toBottomOf="@id/sound_text" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/sound_layout"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
+        <TextView
+            android:id="@+id/sound_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:layout_marginStart="@dimen/marginBasic"
+            android:text="@string/sound"
+            android:textColor="@color/alarmTimeTextColor"
+            android:textSize="@dimen/add_fragment_title_text_size"
+            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/divider_sound_desc"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider_repeat_sound" />
+
+        <TextView
+            android:id="@+id/sound_value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:layout_marginStart="@dimen/margin_start_value"
+            android:layout_marginEnd="@dimen/margin_end_value"
+            android:textAlignment="textEnd"
+            android:textColor="@color/alarmNameTextColor"
+            android:textSize="@dimen/add_fragment_desc_text_size"
+            app:layout_constraintBottom_toTopOf="@id/divider_sound_desc"
+            app:layout_constraintEnd_toStartOf="@id/sound_arrow"
+            app:layout_constraintStart_toEndOf="@id/sound_text"
             app:layout_constraintTop_toBottomOf="@id/divider_repeat_sound"
-            tools:layout_editor_absoluteX="0dp">
+            tools:text="Some sound" />
 
-            <TextView
-                android:id="@+id/sound_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/marginBasic"
-                android:text="@string/sound"
-                android:textColor="@color/alarmTimeTextColor"
-                android:textSize="@dimen/add_fragment_title_text_size"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/sound_value"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_start_value"
-                android:layout_marginEnd="@dimen/margin_end_value"
-                android:textAlignment="textEnd"
-                android:textColor="@color/alarmNameTextColor"
-                android:textSize="@dimen/add_fragment_desc_text_size"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/sound_arrow"
-                app:layout_constraintStart_toEndOf="@id/sound_text"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.512"
-                tools:text="Some sound" />
-
-            <ImageView
-                android:id="@+id/sound_arrow"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="@dimen/marginBasic"
-                android:contentDescription="@string/choose_description"
-                android:src="@drawable/ic_baseline_arrow_forward_ios_24"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/alarmTimeTextColor" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/sound_arrow"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginVertical="16dp"
+            android:layout_marginEnd="@dimen/marginBasic"
+            android:contentDescription="@string/choose_description"
+            android:src="@drawable/ic_baseline_arrow_forward_ios_24"
+            app:layout_constraintBottom_toTopOf="@id/divider_sound_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider_repeat_sound"
+            app:tint="@color/alarmTimeTextColor" />
 
         <ImageView
             android:id="@+id/divider_sound_desc"
@@ -213,33 +187,24 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/divider"
             android:src="@drawable/alarm_list_divider"
-            app:layout_constraintBottom_toTopOf="@id/description_layout"
-            app:layout_constraintTop_toBottomOf="@id/sound_layout" />
+            app:layout_constraintBottom_toTopOf="@id/description_input_layout"
+            app:layout_constraintTop_toBottomOf="@id/sound_text" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/description_layout"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/description_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="65dp"
-            app:layout_constraintTop_toBottomOf="@id/divider_sound_desc"
-            tools:layout_editor_absoluteX="0dp">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="16dp"
+            android:hint="@string/add_some_description"
+            app:layout_constraintTop_toBottomOf="@id/divider_sound_desc">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/description_input_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/description_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginTop="1dp"
-                android:hint="@string/add_some_description"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/description_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:text="Some description" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                tools:text="Some description" />
+        </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

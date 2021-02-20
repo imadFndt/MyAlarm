@@ -6,7 +6,7 @@
     app:startDestination="@id/alarm_list">
     <fragment
         android:id="@+id/alarm_list"
-        android:name="com.fndt.alarm.view.main.AlarmListFragment"
+        android:name="com.fndt.alarm.presenation.fragments.AlarmListFragment"
         tools:layout="@layout/alarm_list_fragment">
         <action
             android:id="@+id/to_add_fragment"
@@ -14,7 +14,7 @@
     </fragment>
     <fragment
         android:id="@+id/add_fragment"
-        android:name="com.fndt.alarm.view.main.EditFragment"
+        android:name="com.fndt.alarm.presenation.fragments.EditFragment"
         tools:layout="@layout/add_fragment">
         <action
             android:id="@+id/to_list_fragment"
