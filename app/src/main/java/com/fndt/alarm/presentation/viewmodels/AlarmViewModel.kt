@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.fndt.alarm.domain.AlarmDataUseCase
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.NextAlarmItem
+import com.fndt.alarm.domain.dto.NextAlarmItem
+import com.fndt.alarm.domain.dto.AlarmItem
 
 class AlarmViewModel(private val alarmControl: AlarmDataUseCase) : ViewModel() {
     fun requestAlarmingItem() {

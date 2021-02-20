@@ -1,29 +1,37 @@
-package com.fndt.alarm.model
+package com.fndt.alarm.domain.dto
 
-import android.content.Context
-import android.media.RingtoneManager
-import android.net.Uri
-import android.provider.Settings
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.fndt.alarm.domain.utils.FIVE_MINUTES
 import java.io.*
+import java.util.*
 
-val defaultAlarmSound = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()
-
-@Entity(tableName = "alarms")
 data class AlarmItem(
     var time: Long,
     var name: String,
     var isActive: Boolean,
     var repeatPeriod: MutableList<AlarmRepeat> = mutableListOf(AlarmRepeat.NONE),
-    var melody: String = defaultAlarmSound
+    var melody: String,
+    var id: Long
 ) : Serializable {
     init {
         if (time > 1439) throw Exception()
     }
 
-    @PrimaryKey(autoGenerate = true)
-    var id: Long = 0
+    fun getHour(): Long = time / 60
+    fun getMinute(): Long = time % 60
+
+    fun snoozed(): AlarmItem {
+        val currentTime: Int
+        Calendar.getInstance().apply { currentTime = get(Calendar.MINUTE) + get(Calendar.HOUR_OF_DAY) * 60 }
+        val newTime = (currentTime + FIVE_MINUTES).toLong()
+        return AlarmItem(
+            time = newTime,
+            name = this.name,
+            true,
+            mutableListOf(AlarmRepeat.ONCE_DESTROY),
+            melody = this.melody,
+            id = this.id
+        )
+    }
 
     fun toByteArray(): ByteArray {
         val byteArrayOutputStream = ByteArrayOutputStream()
@@ -37,9 +45,6 @@ data class AlarmItem(
         return result
     }
 
-    fun getHour(): Long = time / 60
-    fun getMinute(): Long = time % 60
-
     companion object {
         fun fromByteArray(array: ByteArray): AlarmItem {
             val byteArrayInputStream = ByteArrayInputStream(array)
@@ -49,12 +54,6 @@ data class AlarmItem(
             objectInput.close()
             byteArrayInputStream.close()
             return result
-        }
-
-        fun String.getMelodyTitle(context: Context): String {
-            RingtoneManager.getRingtone(context, Uri.parse(this)).apply {
-                return getTitle(context)
-            }
         }
     }
 }

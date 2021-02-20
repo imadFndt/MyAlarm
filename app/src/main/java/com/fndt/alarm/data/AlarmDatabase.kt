@@ -5,9 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.fndt.alarm.model.AlarmItem
 
-@Database(entities = [AlarmItem::class], version = 1)
+@Database(entities = [AlarmItemEntity::class], version = 1)
 @TypeConverters(AlarmConverter::class)
 abstract class AlarmDatabase : RoomDatabase() {
     abstract fun issueDao(): AlarmItemDao

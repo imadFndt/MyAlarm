@@ -11,13 +11,12 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import com.fndt.alarm.R
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.util.INTENT_STOP_ALARM
-import com.fndt.alarm.model.util.toIntent
-import com.fndt.alarm.model.util.toTimeString
+import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
 import com.fndt.alarm.presentation.activities.AlarmActivity
+import com.fndt.alarm.presentation.util.toIntent
+import com.fndt.alarm.presentation.util.toTimeString
 import javax.inject.Inject
-
 
 class NotificationProvider @Inject constructor(private var context: Context) {
     fun notify(event: AlarmItem): Notification {

@@ -1,7 +1,7 @@
 package com.fndt.alarm.domain
 
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.NextAlarmItem
+import com.fndt.alarm.domain.dto.NextAlarmItem
+import com.fndt.alarm.domain.dto.AlarmItem
 
 
 interface IRepository {

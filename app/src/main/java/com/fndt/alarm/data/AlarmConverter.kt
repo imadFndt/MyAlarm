@@ -1,8 +1,8 @@
 package com.fndt.alarm.data
 
 import androidx.room.TypeConverter
-import com.fndt.alarm.model.AlarmRepeat
-import com.fndt.alarm.model.util.*
+import com.fndt.alarm.domain.dto.AlarmRepeat
+import com.fndt.alarm.domain.utils.*
 import kotlin.experimental.or
 
 object AlarmConverter {

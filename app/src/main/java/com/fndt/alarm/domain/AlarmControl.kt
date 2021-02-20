@@ -1,13 +1,12 @@
 package com.fndt.alarm.domain
 
-import com.fndt.alarm.model.AlarmIntent
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmRepeat
-import com.fndt.alarm.model.NextAlarmItem
-import com.fndt.alarm.model.util.INTENT_FIRE_ALARM
-import com.fndt.alarm.model.util.INTENT_SNOOZE_ALARM
-import com.fndt.alarm.model.util.INTENT_STOP_ALARM
-import com.fndt.alarm.model.util.snoozed
+import com.fndt.alarm.domain.dto.AlarmIntent
+import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.domain.dto.AlarmRepeat
+import com.fndt.alarm.domain.dto.NextAlarmItem
+import com.fndt.alarm.domain.utils.INTENT_FIRE_ALARM
+import com.fndt.alarm.domain.utils.INTENT_SNOOZE_ALARM
+import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.fndt.alarm.model
+package com.fndt.alarm.domain.dto
 
 import java.util.*
 

@@ -5,10 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.fndt.alarm.domain.AlarmEventHandler
-import com.fndt.alarm.model.AlarmIntent
-import com.fndt.alarm.model.util.getAlarmItem
+import com.fndt.alarm.domain.dto.AlarmIntent
+import com.fndt.alarm.presentation.util.getAlarmItem
 import javax.inject.Inject
-
 
 class AlarmReceiver : BroadcastReceiver() {
     @Inject

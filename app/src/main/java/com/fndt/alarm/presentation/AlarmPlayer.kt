@@ -1,4 +1,4 @@
-package com.fndt.alarm.model
+package com.fndt.alarm.presentation
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -10,6 +10,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.core.content.getSystemService
+import com.fndt.alarm.domain.dto.AlarmItem
 import javax.inject.Inject
 
 class AlarmPlayer @Inject constructor(private val context: Context) {

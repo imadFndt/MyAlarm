@@ -11,12 +11,14 @@ import androidx.core.content.getSystemService
 import androidx.lifecycle.ViewModelProvider
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmActivityBinding
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.presentation.AlarmReceiver
-import com.fndt.alarm.model.util.*
+import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.domain.utils.INTENT_SNOOZE_ALARM
+import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
 import com.fndt.alarm.presentation.AlarmApplication
+import com.fndt.alarm.presentation.AlarmReceiver
+import com.fndt.alarm.presentation.util.toIntent
+import com.fndt.alarm.presentation.util.toTimeString
 import com.fndt.alarm.presentation.viewmodels.AlarmViewModel
-
 
 class AlarmActivity : AppCompatActivity() {
     private lateinit var binding: AlarmActivityBinding

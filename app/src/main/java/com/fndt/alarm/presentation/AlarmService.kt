@@ -5,12 +5,11 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import com.fndt.alarm.domain.WakeLockUseCase
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmPlayer
+import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.domain.utils.INTENT_FIRE_ALARM
+import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
 import com.fndt.alarm.presentation.NotificationProvider.Companion.NOTIFICATION_ID
-import com.fndt.alarm.model.util.INTENT_FIRE_ALARM
-import com.fndt.alarm.model.util.INTENT_STOP_ALARM
-import com.fndt.alarm.model.util.getAlarmItem
+import com.fndt.alarm.presentation.util.getAlarmItem
 import javax.inject.Inject
 
 class AlarmService : Service() {

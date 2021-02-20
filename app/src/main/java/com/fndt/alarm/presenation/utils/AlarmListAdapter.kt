@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmItemBinding
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.util.toRepeatString
-import com.fndt.alarm.model.util.toTimeString
+import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.presentation.util.toRepeatString
+import com.fndt.alarm.presentation.util.toTimeString
 
 class AlarmListAdapter : RecyclerView.Adapter<AlarmListAdapter.AlarmViewHolder>() {
     var itemTouchListener: ((AlarmItem, MotionEvent) -> Unit)? = null

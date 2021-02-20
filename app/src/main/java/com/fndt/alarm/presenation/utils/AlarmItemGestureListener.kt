@@ -3,7 +3,7 @@ package com.fndt.alarm.presenation.utils
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
-import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.domain.dto.AlarmItem
 
 class AlarmItemGestureListener : GestureDetector.OnGestureListener {
     var longPressedCallback: ((AlarmItem?) -> Unit)? = null

@@ -4,11 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.fndt.alarm.databinding.DayItemBinding
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmRepeat
+import com.fndt.alarm.domain.dto.AlarmRepeat
+import com.fndt.alarm.domain.dto.AlarmItem
 
-class DayChooseAdapter :
-    RecyclerView.Adapter<DayChooseAdapter.DayChooseViewHolder>() {
+class DayChooseAdapter : RecyclerView.Adapter<DayChooseAdapter.DayChooseViewHolder>() {
     var checkListener: ((AlarmItem) -> Unit)? = null
 
     private var currentItem: AlarmItem? = null

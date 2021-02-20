@@ -1,7 +1,7 @@
-package com.fndt.alarm.model
+package com.fndt.alarm.domain.dto
 
 import com.fndt.alarm.R
-import com.fndt.alarm.model.util.*
+import com.fndt.alarm.domain.utils.*
 
 enum class AlarmRepeat(val byteValue: Byte, val text: Int, val abbreviationText: Int) {
     MONDAY(REPEAT_MONDAY, R.string.monday, R.string.monday_short),

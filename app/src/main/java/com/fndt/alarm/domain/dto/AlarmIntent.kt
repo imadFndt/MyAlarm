@@ -1,4 +1,4 @@
-package com.fndt.alarm.model
+package com.fndt.alarm.domain.dto
 
 data class AlarmIntent(
     val item: AlarmItem?,

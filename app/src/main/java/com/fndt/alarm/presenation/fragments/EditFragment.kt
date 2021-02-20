@@ -1,6 +1,7 @@
 package com.fndt.alarm.presenation.fragments
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
@@ -15,15 +16,14 @@ import android.widget.TimePicker
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.fndt.alarm.data.defaultAlarmSound
 import com.fndt.alarm.databinding.AddFragmentBinding
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmItem.Companion.getMelodyTitle
-import com.fndt.alarm.model.AlarmRepeat
-import com.fndt.alarm.model.defaultAlarmSound
-import com.fndt.alarm.model.util.DAY_CHOOSE_FRAGMENT_TAG
-import com.fndt.alarm.model.util.RINGTONE_REQ_CODE
-import com.fndt.alarm.model.util.toRepeatString
+import com.fndt.alarm.domain.dto.AlarmRepeat
+import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.presentation.util.DAY_CHOOSE_FRAGMENT_TAG
+import com.fndt.alarm.presentation.util.RINGTONE_REQ_CODE
 import com.fndt.alarm.presentation.AlarmApplication
+import com.fndt.alarm.presentation.util.toRepeatString
 import com.fndt.alarm.presentation.viewmodels.MainActivityViewModel
 import java.util.*
 
@@ -37,7 +37,7 @@ class EditFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = AddFragmentBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -53,7 +53,7 @@ class EditFragment : Fragment() {
         viewModel.status.observe(viewLifecycleOwner) { status ->
             if (status is MainActivityViewModel.AlarmStatus.EditStatus) {
                 status.item?.let { currentItem = it } ?: run {
-                    currentItem = AlarmItem(time, "", true, mutableListOf(AlarmRepeat.NONE), defaultAlarmSound)
+                    currentItem = AlarmItem(time, "", true, mutableListOf(AlarmRepeat.NONE), defaultAlarmSound, 0)
                 }
                 viewModel.updateEditedItem(currentItem)
                 updateView(currentItem)
@@ -128,6 +128,12 @@ class EditFragment : Fragment() {
         binding.repeatValue.text = currentItem.repeatPeriod.toRepeatString(requireContext())
         binding.descriptionEditText.setText(currentItem.name)
         binding.soundValue.text = currentItem.melody.getMelodyTitle(requireContext())
+    }
+
+    private fun String.getMelodyTitle(context: Context): String {
+        RingtoneManager.getRingtone(context, Uri.parse(this)).apply {
+            return getTitle(context)
+        }
     }
 
     private fun TimePicker.setTime(hour: Long, minute: Long) {

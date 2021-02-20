@@ -11,12 +11,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
-import com.fndt.alarm.model.AlarmRepeat
-import com.fndt.alarm.model.NextAlarmItem
-import com.fndt.alarm.model.util.toExtendedTimeString
+import com.fndt.alarm.domain.dto.AlarmRepeat
+import com.fndt.alarm.domain.dto.NextAlarmItem
 import com.fndt.alarm.presenation.utils.AlarmItemGestureListener
 import com.fndt.alarm.presenation.utils.AlarmListAdapter
 import com.fndt.alarm.presentation.activities.MainActivity
+import com.fndt.alarm.presentation.util.toExtendedTimeString
 import com.fndt.alarm.presentation.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.*
 import java.util.*

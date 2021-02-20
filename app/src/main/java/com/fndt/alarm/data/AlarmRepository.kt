@@ -5,11 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.switchMap
 import com.fndt.alarm.domain.IRepository
-import com.fndt.alarm.model.AlarmItem
-import com.fndt.alarm.model.AlarmRepeat
-import com.fndt.alarm.model.NextAlarmItem
-import com.fndt.alarm.model.util.toCalendarDayOfWeek
-import com.fndt.alarm.model.util.toTimeString
+import com.fndt.alarm.domain.dto.AlarmRepeat
+import com.fndt.alarm.domain.dto.NextAlarmItem
+import com.fndt.alarm.domain.dto.AlarmItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -20,7 +18,9 @@ import javax.inject.Singleton
 class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao) : IRepository {
     override var callback: IRepository.Callback? = null
 
-    private val listObserver = Observer<List<AlarmItem>> { callback?.onUpdateList(it) }
+    private val listObserver = Observer<List<AlarmItemEntity>> {
+        callback?.onUpdateList(it.map { entity -> entity.toAlarmItem() })
+    }
     private val nextObserver = Observer<NextAlarmItem?> { callback?.onUpdateNextItem(it) }
 
     private val nextDaoItem = alarmItemDao.getEnabled().switchMap { MutableLiveData(getNextEnabledItem(it)) }
@@ -32,30 +32,34 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
 
     override suspend fun addItem(alarmItem: AlarmItem) =
         withContext(Dispatchers.IO) {
-            Log.d("Repository", "Add item ${alarmItem.name} at ${alarmItem.time.toTimeString()}")
-            alarmItemDao.insert(alarmItem)
+            Log.d("Repository", "Add item ${alarmItem.name} at ${alarmItem.time}")
+            alarmItemDao.insert(alarmItem.toEntity())
         }
 
-    override suspend fun removeItem(item: AlarmItem) = withContext(Dispatchers.IO) { alarmItemDao.remove(item) }
+    override suspend fun removeItem(item: AlarmItem) = withContext(Dispatchers.IO) {
+        alarmItemDao.remove(item.toEntity())
+    }
 
     override fun clear() {
         alarmItemDao.getAll().removeObserver(listObserver)
         nextDaoItem.removeObserver(nextObserver)
     }
 
-    private fun getNextEnabledItem(items: List<AlarmItem>): NextAlarmItem? = items.getTimedList().findClosestItem()
+    private fun getNextEnabledItem(items: List<AlarmItemEntity>): NextAlarmItem? {
+        return items.getTimedList().findClosestItem()
+    }
 
-    private fun List<AlarmItem>.getTimedList(): List<NextAlarmItem> {
+    private fun List<AlarmItemEntity>.getTimedList(): List<NextAlarmItem> {
         val newList = mutableListOf<NextAlarmItem>()
         forEach { newList.addAll(processItem(it)) }
         return newList
     }
 
-    private fun processItem(item: AlarmItem): List<NextAlarmItem> {
+    private fun processItem(item: AlarmItemEntity): List<NextAlarmItem> {
         val itemsAlarms = mutableListOf<NextAlarmItem>()
         for (i in item.repeatPeriod) {
             val nextItem = NextAlarmItem(
-                item, when (i) {
+                item.toAlarmItem(), when (i) {
                     AlarmRepeat.NONE, AlarmRepeat.ONCE_DESTROY -> item.time.getTodayTimedCalendar()
                     else -> item.time.getWeekdayTimedCalendar(i)
                 }
@@ -86,6 +90,21 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
         val afterNow = mutableListOf<NextAlarmItem>()
         forEach { if (it.timedCalendar.timeInMillis > now) afterNow.add(it) }
         return afterNow.minByOrNull { it.timedCalendar.timeInMillis }
+    }
+
+    private fun AlarmItem.toEntity(): AlarmItemEntity {
+        return AlarmItemEntity(time, name, isActive, repeatPeriod, melody).also { it.id = this.id }
+    }
+
+    private fun AlarmRepeat.toCalendarDayOfWeek(): Int = when (this) {
+        AlarmRepeat.MONDAY -> 2
+        AlarmRepeat.TUESDAY -> 3
+        AlarmRepeat.WEDNESDAY -> 4
+        AlarmRepeat.THURSDAY -> 5
+        AlarmRepeat.FRIDAY -> 6
+        AlarmRepeat.SATURDAY -> 7
+        AlarmRepeat.SUNDAY -> 1
+        else -> 0
     }
 }
 

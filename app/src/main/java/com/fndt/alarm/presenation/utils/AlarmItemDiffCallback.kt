@@ -1,7 +1,7 @@
 package com.fndt.alarm.presenation.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.fndt.alarm.model.AlarmItem
+import com.fndt.alarm.domain.dto.AlarmItem
 
 class AlarmItemDiffCallback(
     private val oldList: List<AlarmItem>,
