@@ -13,8 +13,8 @@ import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
 import com.fndt.alarm.domain.dto.AlarmRepeat
 import com.fndt.alarm.domain.dto.NextAlarmItem
-import com.fndt.alarm.presenation.utils.AlarmItemGestureListener
-import com.fndt.alarm.presenation.utils.AlarmListAdapter
+import com.fndt.alarm.presentation.util.AlarmItemGestureListener
+import com.fndt.alarm.presentation.util.AlarmListAdapter
 import com.fndt.alarm.presentation.activities.MainActivity
 import com.fndt.alarm.presentation.util.toExtendedTimeString
 import com.fndt.alarm.presentation.viewmodels.MainActivityViewModel

@@ -1,4 +1,4 @@
-package com.fndt.alarm.presenation.utils
+package com.fndt.alarm.presentation.util
 
 import android.util.Log
 import android.view.GestureDetector

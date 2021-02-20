@@ -1,4 +1,4 @@
-package com.fndt.alarm.presenation.utils
+package com.fndt.alarm.presentation.util
 
 import androidx.recyclerview.widget.DiffUtil
 import com.fndt.alarm.domain.dto.AlarmItem

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.fndt.alarm.databinding.DayBottomSheetBinding
-import com.fndt.alarm.presenation.utils.DayChooseAdapter
+import com.fndt.alarm.presentation.util.DayChooseAdapter
 import com.fndt.alarm.presentation.AlarmApplication
 import com.fndt.alarm.presentation.viewmodels.MainActivityViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
