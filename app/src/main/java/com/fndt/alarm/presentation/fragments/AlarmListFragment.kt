@@ -1,4 +1,4 @@
-package com.fndt.alarm.presenation.fragments
+package com.fndt.alarm.presentation.fragments
 
 import android.os.Bundle
 import android.view.GestureDetector
@@ -13,9 +13,9 @@ import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmListFragmentBinding
 import com.fndt.alarm.domain.dto.AlarmRepeat
 import com.fndt.alarm.domain.dto.NextAlarmItem
+import com.fndt.alarm.presentation.activities.MainActivity
 import com.fndt.alarm.presentation.util.AlarmItemGestureListener
 import com.fndt.alarm.presentation.util.AlarmListAdapter
-import com.fndt.alarm.presentation.activities.MainActivity
 import com.fndt.alarm.presentation.util.toExtendedTimeString
 import com.fndt.alarm.presentation.viewmodels.MainActivityViewModel
 import kotlinx.coroutines.*
@@ -42,8 +42,7 @@ class AlarmListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val onGestureListener = AlarmItemGestureListener()
         onGestureListener.singleTapCallback = { viewModel.editItem(it) }
-        onGestureListener.longPressedCallback =
-            { item -> item?.let { viewModel.removeAlarm(it) } }
+        onGestureListener.longPressedCallback = { item -> item?.let { viewModel.removeAlarm(it) } }
         val gestureDetector = GestureDetector(context, onGestureListener)
         val listAdapter = AlarmListAdapter()
         listAdapter.itemTouchListener = { item, event ->
@@ -66,9 +65,7 @@ class AlarmListFragment : Fragment() {
             adapter = listAdapter
         }
         binding.addButton.setOnClickListener { viewModel.editItem(null) }
-        viewModel.alarmList.observe(viewLifecycleOwner) {
-            listAdapter.updateItems(it)
-        }
+        viewModel.alarmList.observe(viewLifecycleOwner) { listAdapter.updateItems(it) }
         viewModel.nextAlarm.observe(viewLifecycleOwner) { nextItem ->
             nextItem?.let {
                 stopTrackingTime(false)

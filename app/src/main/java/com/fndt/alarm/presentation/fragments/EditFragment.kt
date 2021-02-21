@@ -1,4 +1,4 @@
-package com.fndt.alarm.presenation.fragments
+package com.fndt.alarm.presentation.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
