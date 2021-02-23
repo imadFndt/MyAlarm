@@ -15,13 +15,13 @@ import javax.inject.Singleton
 import kotlin.properties.Delegates
 
 @Singleton
-class AlarmControl @Inject constructor(
-    private var serviceHandler: IServiceHandler,
+open class AlarmControl @Inject constructor(
+    private val serviceHandler: IServiceHandler,
     private val alarmSetup: IAlarmSetup,
     private val wakelockProvider: IWakelockProvider,
-    var repository: IRepository
+    private val repository: IRepository
 ) : AlarmEventHandler, AlarmDataUseCase, WakeLockUseCase {
-    var callbacks: MutableList<AlarmDataUseCase.Callback?> = mutableListOf()
+    private var callbacks: MutableList<AlarmDataUseCase.Callback?> = mutableListOf()
 
     private var alarmingItem: AlarmItem? by Delegates.observable(null) { _, _, newValue ->
         callbacks.forEach { it?.onUpdateAlarmingItem(newValue) }
@@ -38,7 +38,7 @@ class AlarmControl @Inject constructor(
     private var savedValue: NextAlarmItem? = null
 
     init {
-        repository.callback = object : IRepository.Callback {
+        repository.setCallback(object : IRepository.Callback {
             override fun onUpdateList(list: List<AlarmItem>) {
                 alarmList = list
             }
@@ -48,7 +48,7 @@ class AlarmControl @Inject constructor(
                 if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
                 savedValue = item
             }
-        }
+        })
     }
 
     override fun handleEvent(intent: AlarmIntent) {
@@ -112,7 +112,7 @@ class AlarmControl @Inject constructor(
     }
 
     override fun clear() {
-        repository.callback = null
+        repository.setCallback(null)
         wakelockProvider.releaseServiceLock()
         repositoryScope.cancel()
     }

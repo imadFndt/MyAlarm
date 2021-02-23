@@ -13,7 +13,7 @@ data class AlarmItem(
     var id: Long
 ) : Serializable {
     init {
-        if (time > 1439) throw Exception()
+        if (time > 1439) throw IllegalStateException()
     }
 
     fun getHour(): Long = time / 60

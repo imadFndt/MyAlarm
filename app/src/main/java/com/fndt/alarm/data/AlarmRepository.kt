@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.switchMap
 import com.fndt.alarm.domain.IRepository
+import com.fndt.alarm.domain.dto.AlarmItem
 import com.fndt.alarm.domain.dto.AlarmRepeat
 import com.fndt.alarm.domain.dto.NextAlarmItem
-import com.fndt.alarm.domain.dto.AlarmItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Singleton
 class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao) : IRepository {
-    override var callback: IRepository.Callback? = null
+    private var callback: IRepository.Callback? = null
 
     private val listObserver = Observer<List<AlarmItemEntity>> {
         callback?.onUpdateList(it.map { entity -> entity.toAlarmItem() })
@@ -38,6 +38,10 @@ class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao
 
     override suspend fun removeItem(item: AlarmItem) = withContext(Dispatchers.IO) {
         alarmItemDao.remove(item.toEntity())
+    }
+
+    override fun setCallback(callback: IRepository.Callback?) {
+        this.callback = callback
     }
 
     override fun clear() {
