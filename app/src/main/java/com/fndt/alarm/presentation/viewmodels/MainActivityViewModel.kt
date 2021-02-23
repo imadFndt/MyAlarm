@@ -2,8 +2,8 @@ package com.fndt.alarm.presentation.viewmodels
 
 import androidx.lifecycle.*
 import com.fndt.alarm.domain.AlarmDataUseCase
-import com.fndt.alarm.domain.dto.NextAlarmItem
 import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.domain.dto.NextAlarmItem
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel(private val control: AlarmDataUseCase) : ViewModel() {

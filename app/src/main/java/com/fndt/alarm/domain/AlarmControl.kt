@@ -15,7 +15,7 @@ import javax.inject.Singleton
 import kotlin.properties.Delegates
 
 @Singleton
-open class AlarmControl @Inject constructor(
+class AlarmControl @Inject constructor(
     private val serviceHandler: IServiceHandler,
     private val alarmSetup: IAlarmSetup,
     private val wakelockProvider: IWakelockProvider,
@@ -113,6 +113,7 @@ open class AlarmControl @Inject constructor(
 
     override fun clear() {
         repository.setCallback(null)
+        repository.clear()
         wakelockProvider.releaseServiceLock()
         repositoryScope.cancel()
     }
