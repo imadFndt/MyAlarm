@@ -34,26 +34,22 @@ data class AlarmItem(
     }
 
     fun toByteArray(): ByteArray {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        val objectOutputStream: ObjectOutputStream
-        objectOutputStream = ObjectOutputStream(byteArrayOutputStream)
-        objectOutputStream.writeObject(this)
-        objectOutputStream.flush()
-        val result = byteArrayOutputStream.toByteArray()
-        byteArrayOutputStream.close()
-        objectOutputStream.close()
-        return result
+        ByteArrayOutputStream().use { byteStream ->
+            ObjectOutputStream(byteStream).use { objectStream ->
+                objectStream.writeObject(this)
+                objectStream.flush()
+                return byteStream.toByteArray()
+            }
+        }
     }
 
     companion object {
         fun fromByteArray(array: ByteArray): AlarmItem {
-            val byteArrayInputStream = ByteArrayInputStream(array)
-            val objectInput: ObjectInput
-            objectInput = ObjectInputStream(byteArrayInputStream)
-            val result = objectInput.readObject() as AlarmItem
-            objectInput.close()
-            byteArrayInputStream.close()
-            return result
+            ByteArrayInputStream(array).use { byteArrayStream ->
+                ObjectInputStream(byteArrayStream).use { objectInput ->
+                    return objectInput.readObject() as AlarmItem
+                }
+            }
         }
     }
 }
