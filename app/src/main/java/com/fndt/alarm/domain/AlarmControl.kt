@@ -7,13 +7,15 @@ import com.fndt.alarm.domain.dto.NextAlarmItem
 import com.fndt.alarm.domain.utils.INTENT_FIRE_ALARM
 import com.fndt.alarm.domain.utils.INTENT_SNOOZE_ALARM
 import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.properties.Delegates
 
+@ExperimentalCoroutinesApi
 @Singleton
 class AlarmControl @Inject constructor(
     private val serviceHandler: IServiceHandler,
@@ -21,35 +23,21 @@ class AlarmControl @Inject constructor(
     private val wakelockProvider: IWakelockProvider,
     private val repository: IRepository
 ) : AlarmEventHandler, AlarmDataUseCase, WakeLockUseCase {
-    private var callbacks: MutableList<AlarmDataUseCase.Callback?> = mutableListOf()
+    override val alarmingItem: StateFlow<AlarmItem?> get() = _alarmingItem
 
-    private var alarmingItem: AlarmItem? by Delegates.observable(null) { _, _, newValue ->
-        callbacks.forEach { it?.onUpdateAlarmingItem(newValue) }
+    override val alarmListFlow = repository.itemList.flowOn(Dispatchers.IO)
+
+    override val nextItemFlow = repository.nextItemFlow.flowOn(Dispatchers.IO).map { item ->
+        if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
+        savedValue = item
+        item
     }
-    private var alarmList: List<AlarmItem>? by Delegates.observable(null) { _, _, newValue ->
-        callbacks.forEach { it?.onUpdateAlarmList(newValue) }
-    }
-    private var nextAlarm: NextAlarmItem? by Delegates.observable(null) { _, _, newValue ->
-        callbacks.forEach { it?.onUpdateNextItem(newValue) }
-    }
+
+    private val _alarmingItem = MutableStateFlow<AlarmItem?>(null)
 
     private val repositoryScope = MainScope()
 
     private var savedValue: NextAlarmItem? = null
-
-    init {
-        repository.setCallback(object : IRepository.Callback {
-            override fun onUpdateList(list: List<AlarmItem>) {
-                alarmList = list
-            }
-
-            override fun onUpdateNextItem(item: NextAlarmItem?) {
-                nextAlarm = item
-                if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
-                savedValue = item
-            }
-        })
-    }
 
     override fun handleEvent(intent: AlarmIntent) {
         intent.item ?: return
@@ -68,18 +56,6 @@ class AlarmControl @Inject constructor(
         repository.removeItem(item)
     }
 
-    override fun addDataUseCaseCallback(callback: AlarmDataUseCase.Callback) {
-        callbacks.add(callback)
-    }
-
-    override fun removeDataUseCaseCallback(callback: AlarmDataUseCase.Callback) {
-        if (callbacks.contains(callback)) callbacks.remove(callback)
-    }
-
-    override fun requestAlarmingItem() {
-        alarmingItem = alarmingItem
-    }
-
     override fun acquireWakeLock() {
         wakelockProvider.acquireServiceLock()
     }
@@ -90,30 +66,25 @@ class AlarmControl @Inject constructor(
 
     private fun fireAlarm(item: AlarmItem) {
         if (item.repeatPeriod.contains(AlarmRepeat.NONE)) item.isActive = !item.isActive
-        repositoryScope.launch {
-            if (item.repeatPeriod.contains(AlarmRepeat.ONCE_DESTROY)) {
-                repository.removeItem(item)
-            } else {
-                repository.addItem(item)
-            }
+        repositoryScope.launch(Dispatchers.IO) {
+            val repeatOnceDestroy = item.repeatPeriod.contains(AlarmRepeat.ONCE_DESTROY)
+            if (repeatOnceDestroy) repository.removeItem(item) else repository.addItem(item)
         }
-        alarmingItem = item
+        _alarmingItem.value = item
         serviceHandler.startService(INTENT_FIRE_ALARM, item)
     }
 
     private fun snoozeAlarm(item: AlarmItem) {
-        repositoryScope.launch { repository.addItem(item.snoozed()) }
+        repositoryScope.launch(Dispatchers.IO) { repository.addItem(item.snoozed()) }
         stopAlarm(item)
     }
 
     private fun stopAlarm(item: AlarmItem) {
         serviceHandler.startService(INTENT_STOP_ALARM, item)
-        alarmingItem = null
+        _alarmingItem.value = null
     }
 
     override fun clear() {
-        repository.setCallback(null)
-        repository.clear()
         wakelockProvider.releaseServiceLock()
         repositoryScope.cancel()
     }

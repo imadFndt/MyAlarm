@@ -34,7 +34,7 @@
             android:name="com.fndt.alarm.presentation.activities.AlarmActivity"
             android:autoRemoveFromRecents="true"
             android:exported="false"
-            android:launchMode="singleTask"
+            android:launchMode="singleInstance"
             android:screenOrientation="sensorPortrait"
             android:showOnLockScreen="true" />
 

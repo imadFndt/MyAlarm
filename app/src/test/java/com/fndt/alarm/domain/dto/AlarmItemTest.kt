@@ -6,7 +6,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 import kotlin.random.Random
 
-@Suppress("IllegalIdentifier")
 class AlarmItemTest {
     @Test
     fun `Serializers works correctly`() {

@@ -1,19 +1,19 @@
 package com.fndt.alarm.domain
 
-import com.fndt.alarm.domain.dto.NextAlarmItem
 import com.fndt.alarm.domain.dto.AlarmItem
+import com.fndt.alarm.domain.dto.NextAlarmItem
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface AlarmDataUseCase {
+    @ExperimentalCoroutinesApi
+    val alarmingItem: StateFlow<AlarmItem?>
+    val alarmListFlow: Flow<List<AlarmItem>>
+    val nextItemFlow: Flow<NextAlarmItem?>
+
     suspend fun addItem(item: AlarmItem)
     suspend fun removeItem(item: AlarmItem)
-    fun addDataUseCaseCallback(callback: Callback)
-    fun removeDataUseCaseCallback(callback: Callback)
-    fun requestAlarmingItem()
     fun clear()
 
-    interface Callback {
-        fun onUpdateAlarmList(list: List<AlarmItem>?)
-        fun onUpdateNextItem(item: NextAlarmItem?)
-        fun onUpdateAlarmingItem(item: AlarmItem?)
-    }
 }

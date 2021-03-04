@@ -1,14 +1,14 @@
 package com.fndt.alarm.data
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.asFlow
 import com.fndt.alarm.domain.IRepository
 import com.fndt.alarm.domain.dto.AlarmItem
 import com.fndt.alarm.domain.dto.AlarmRepeat
 import com.fndt.alarm.domain.dto.NextAlarmItem
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
@@ -16,37 +16,24 @@ import javax.inject.Singleton
 
 @Singleton
 class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao) : IRepository {
-    private var callback: IRepository.Callback? = null
-
-    private val listObserver = Observer<List<AlarmItemEntity>> {
-        callback?.onUpdateList(it.map { entity -> entity.toAlarmItem() })
-    }
-    private val nextObserver = Observer<NextAlarmItem?> { callback?.onUpdateNextItem(it) }
-
-    private val nextDaoItem = alarmItemDao.getEnabled().switchMap { MutableLiveData(getNextEnabledItem(it)) }
-
-    init {
-        alarmItemDao.getAll().observeForever(listObserver)
-        nextDaoItem.observeForever(nextObserver)
-    }
-
-    override suspend fun addItem(alarmItem: AlarmItem) =
-        withContext(Dispatchers.IO) {
-            Log.d("Repository", "Add item ${alarmItem.name} at ${alarmItem.time}")
-            alarmItemDao.insert(alarmItem.toEntity())
+    override val itemList: Flow<List<AlarmItem>> = alarmItemDao.getAll()
+        .asFlow()
+        .map {
+            it.map { entity -> entity.toAlarmItem() }
         }
+
+
+    override val nextItemFlow: Flow<NextAlarmItem?> = alarmItemDao
+        .getEnabled().asFlow()
+        .map { getNextEnabledItem(it) }
+
+    override suspend fun addItem(alarmItem: AlarmItem) = withContext(Dispatchers.IO) {
+        Log.d("Repository", "Add item ${alarmItem.name} at ${alarmItem.time}")
+        alarmItemDao.insert(alarmItem.toEntity())
+    }
 
     override suspend fun removeItem(item: AlarmItem) = withContext(Dispatchers.IO) {
         alarmItemDao.remove(item.toEntity())
-    }
-
-    override fun setCallback(callback: IRepository.Callback?) {
-        this.callback = callback
-    }
-
-    override fun clear() {
-        alarmItemDao.getAll().removeObserver(listObserver)
-        nextDaoItem.removeObserver(nextObserver)
     }
 
     private fun getNextEnabledItem(items: List<AlarmItemEntity>): NextAlarmItem? {

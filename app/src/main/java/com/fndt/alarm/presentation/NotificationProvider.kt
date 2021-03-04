@@ -16,8 +16,10 @@ import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
 import com.fndt.alarm.presentation.activities.AlarmActivity
 import com.fndt.alarm.presentation.util.toIntent
 import com.fndt.alarm.presentation.util.toTimeString
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 class NotificationProvider @Inject constructor(private var context: Context) {
     fun notify(event: AlarmItem): Notification {
         Log.e("NotificationProvider", "Event")

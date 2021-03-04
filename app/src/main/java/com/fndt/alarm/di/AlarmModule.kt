@@ -13,8 +13,9 @@ import com.fndt.alarm.presentation.viewmodels.AlarmViewModel
 import com.fndt.alarm.presentation.viewmodels.MainActivityViewModel
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton
-
+@ExperimentalCoroutinesApi
 @Module
 class AlarmModule(private val context: Context) {
     @Provides

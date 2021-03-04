@@ -5,10 +5,10 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
-import androidx.lifecycle.ViewModelProvider
 import com.fndt.alarm.R
 import com.fndt.alarm.databinding.AlarmActivityBinding
 import com.fndt.alarm.domain.dto.AlarmItem
@@ -19,10 +19,14 @@ import com.fndt.alarm.presentation.AlarmReceiver
 import com.fndt.alarm.presentation.util.toIntent
 import com.fndt.alarm.presentation.util.toTimeString
 import com.fndt.alarm.presentation.viewmodels.AlarmViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@ExperimentalCoroutinesApi
 class AlarmActivity : AppCompatActivity() {
     private lateinit var binding: AlarmActivityBinding
-    private lateinit var viewModel: AlarmViewModel
+    private val viewModel: AlarmViewModel by viewModels {
+        (application as AlarmApplication).component.getAlarmViewModelFactory()
+    }
     private var currentItem: AlarmItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,9 +34,6 @@ class AlarmActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = AlarmActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val viewModelFactory = (application as AlarmApplication).component.getAlarmViewModelFactory()
-        viewModel = ViewModelProvider(this, viewModelFactory).get(AlarmViewModel::class.java)
-        viewModel.requestAlarmingItem()
         viewModel.alarmingItem.observe(this) { item ->
             item?.let {
                 binding.alarmTime.text = item.time.toTimeString()

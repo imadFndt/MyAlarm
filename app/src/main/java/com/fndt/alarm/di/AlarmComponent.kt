@@ -5,8 +5,10 @@ import com.fndt.alarm.presentation.AlarmService
 import com.fndt.alarm.presentation.viewmodels.AlarmViewModel
 import com.fndt.alarm.presentation.viewmodels.MainActivityViewModel
 import dagger.Component
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton
 
+@ExperimentalCoroutinesApi
 @Singleton
 @Component(modules = [AlarmModule::class])
 interface AlarmComponent {
