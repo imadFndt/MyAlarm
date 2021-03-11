@@ -12,6 +12,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 class AlarmViewModel(private val alarmControl: AlarmDataUseCase) : ViewModel() {
     val alarmingItem: LiveData<AlarmItem?> get() = alarmControl.alarmingItem.asLiveData()
 
+    override fun onCleared() {
+        alarmControl.clear()
+        super.onCleared()
+    }
+
     @Suppress("UNCHECKED_CAST")
     class Factory(private val control: AlarmDataUseCase) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {

@@ -8,10 +8,7 @@ import com.fndt.alarm.domain.utils.INTENT_FIRE_ALARM
 import com.fndt.alarm.domain.utils.INTENT_SNOOZE_ALARM
 import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 @ExperimentalCoroutinesApi
 class AlarmControl(
@@ -24,17 +21,20 @@ class AlarmControl(
 
     override val alarmListFlow = repository.itemList.flowOn(Dispatchers.IO)
 
-    override val nextItemFlow = repository.nextItemFlow.flowOn(Dispatchers.IO).map { item ->
-        if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
-        savedValue = item
-        item
-    }
+    override val nextItemFlow get() = _nextItemFlow
 
     private val _alarmingItem = MutableStateFlow<AlarmItem?>(null)
 
     private val repositoryScope = MainScope()
 
+    private val _nextItemFlow = repository.nextItemFlow.flowOn(Dispatchers.IO).onEach { item ->
+        if (savedValue != item) item?.let { alarmSetup.setAlarm(item) } ?: alarmSetup.cancelAlarm()
+        savedValue = item
+    }.apply { launchIn(repositoryScope) }
+
     private var savedValue: NextAlarmItem? = null
+
+    private var isCleared = false
 
     override fun handleEvent(intent: AlarmIntent) {
         intent.item ?: return
@@ -74,7 +74,9 @@ class AlarmControl(
     }
 
     override fun clear() {
+        if (isCleared) return
         wakelockProvider.releaseServiceLock()
         repositoryScope.cancel()
+        isCleared = true
     }
 }
