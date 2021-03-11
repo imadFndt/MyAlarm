@@ -1,13 +1,19 @@
 package com.fndt.alarm.presentation
 
 import android.app.Application
-import com.fndt.alarm.di.AlarmComponent
-import com.fndt.alarm.di.AlarmModule
-import com.fndt.alarm.di.DaggerAlarmComponent
+import com.fndt.alarm.di.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
+@ExperimentalCoroutinesApi
 class AlarmApplication : Application() {
     val component: AlarmComponent by lazy {
-        DaggerAlarmComponent.builder().alarmModule(AlarmModule(this)).build()
+        DaggerAlarmComponent.builder()
+            .appContextModule(AppContextModule(this))
+            .dataModule(DataModule())
+            .alarmUtilsModule(AlarmUtilsModule())
+            .viewModelModule(ViewModelModule())
+            .alarmControlModule(AlarmControlModule())
+            .build()
     }
 }

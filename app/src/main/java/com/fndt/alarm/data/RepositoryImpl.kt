@@ -2,7 +2,7 @@ package com.fndt.alarm.data
 
 import android.util.Log
 import androidx.lifecycle.asFlow
-import com.fndt.alarm.domain.IRepository
+import com.fndt.alarm.domain.Repository
 import com.fndt.alarm.domain.dto.AlarmItem
 import com.fndt.alarm.domain.dto.AlarmRepeat
 import com.fndt.alarm.domain.dto.NextAlarmItem
@@ -15,7 +15,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AlarmRepository @Inject constructor(private val alarmItemDao: AlarmItemDao) : IRepository {
+class RepositoryImpl @Inject constructor(private val alarmItemDao: AlarmItemDao) : Repository {
     override val itemList: Flow<List<AlarmItem>> = alarmItemDao.getAll()
         .asFlow()
         .map {

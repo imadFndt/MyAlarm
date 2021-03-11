@@ -1,6 +1,6 @@
 package com.fndt.alarm.domain
 
-interface IWakelockProvider {
+interface WakelockProvider {
     fun acquireServiceLock()
     fun releaseServiceLock()
 }

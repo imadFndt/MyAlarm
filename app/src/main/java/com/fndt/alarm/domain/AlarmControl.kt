@@ -12,17 +12,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @ExperimentalCoroutinesApi
-@Singleton
-class AlarmControl @Inject constructor(
-    private val serviceHandler: IServiceHandler,
-    private val alarmSetup: IAlarmSetup,
-    private val wakelockProvider: IWakelockProvider,
-    private val repository: IRepository
-) : AlarmEventHandler, AlarmDataUseCase, WakeLockUseCase {
+class AlarmControl(
+    private val serviceHandler: ServiceHandler,
+    private val alarmSetup: AlarmSetup,
+    private val wakelockProvider: WakelockProvider,
+    private val repository: Repository
+) : AlarmEventHandler, AlarmDataUseCase {
     override val alarmingItem: StateFlow<AlarmItem?> get() = _alarmingItem
 
     override val alarmListFlow = repository.itemList.flowOn(Dispatchers.IO)
@@ -54,14 +51,6 @@ class AlarmControl @Inject constructor(
 
     override suspend fun removeItem(item: AlarmItem) {
         repository.removeItem(item)
-    }
-
-    override fun acquireWakeLock() {
-        wakelockProvider.acquireServiceLock()
-    }
-
-    override fun releaseWakeLock() {
-        wakelockProvider.releaseServiceLock()
     }
 
     private fun fireAlarm(item: AlarmItem) {

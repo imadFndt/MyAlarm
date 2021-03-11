@@ -32,7 +32,7 @@ data class AlarmItem(
             id = this.id
         )
     }
-
+    
     fun toByteArray(): ByteArray {
         ByteArrayOutputStream().use { byteStream ->
             ObjectOutputStream(byteStream).use { objectStream ->
@@ -44,7 +44,8 @@ data class AlarmItem(
     }
 
     companion object {
-        fun fromByteArray(array: ByteArray): AlarmItem {
+        fun fromByteArray(array: ByteArray?): AlarmItem? {
+            array ?: return null
             ByteArrayInputStream(array).use { byteArrayStream ->
                 ObjectInputStream(byteArrayStream).use { objectInput ->
                     return objectInput.readObject() as AlarmItem

@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @ExperimentalCoroutinesApi
 @Singleton
-@Component(modules = [AlarmModule::class])
+@Component(modules = [ViewModelModule::class])
 interface AlarmComponent {
     fun getViewModelFactory(): MainActivityViewModel.Factory
     fun getAlarmViewModelFactory(): AlarmViewModel.Factory

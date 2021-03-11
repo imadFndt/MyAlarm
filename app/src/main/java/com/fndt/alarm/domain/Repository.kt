@@ -5,7 +5,7 @@ import com.fndt.alarm.domain.dto.NextAlarmItem
 import kotlinx.coroutines.flow.Flow
 
 
-interface IRepository {
+interface Repository {
     val itemList: Flow<List<AlarmItem>>
     val nextItemFlow: Flow<NextAlarmItem?>
 

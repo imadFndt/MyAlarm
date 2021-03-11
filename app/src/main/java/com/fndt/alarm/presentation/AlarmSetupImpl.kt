@@ -6,16 +6,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import com.fndt.alarm.domain.IAlarmSetup
+import com.fndt.alarm.domain.AlarmSetup
 import com.fndt.alarm.domain.dto.NextAlarmItem
 import com.fndt.alarm.domain.utils.INTENT_FIRE_ALARM
 import com.fndt.alarm.presentation.util.BUNDLE_EXTRA
 import com.fndt.alarm.presentation.util.BYTE_ITEM_EXTRA
 import com.fndt.alarm.presentation.util.PENDING_REQUEST_CODE
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 import javax.inject.Inject
 
-class AlarmSetup @Inject constructor(private val context: Context) : IAlarmSetup {
+@ExperimentalCoroutinesApi
+class AlarmSetupImpl @Inject constructor(private val context: Context) : AlarmSetup {
 
     override fun setAlarm(item: NextAlarmItem) {
         val intent = Intent(context, AlarmReceiver::class.java).apply {

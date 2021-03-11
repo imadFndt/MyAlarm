@@ -4,18 +4,25 @@ import androidx.lifecycle.*
 import com.fndt.alarm.domain.AlarmDataUseCase
 import com.fndt.alarm.domain.dto.AlarmItem
 import com.fndt.alarm.domain.dto.NextAlarmItem
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel(private val control: AlarmDataUseCase) : ViewModel() {
-    val alarmList: LiveData<List<AlarmItem>> get() = control.alarmListFlow.asLiveData()
+    val alarmList: LiveData<List<AlarmItem>> get() = alarmListData
     val status: LiveData<AlarmStatus> get() = statusData
     val nextAlarm: LiveData<NextAlarmItem?> get() = control.nextItemFlow.asLiveData()
     val itemEdited: LiveData<AlarmItem> get() = itemEditedData
 
-    private val statusData: MutableLiveData<AlarmStatus> = MutableLiveData(AlarmStatus.Idle)
-    private val alarmListData: MutableLiveData<List<AlarmItem>> = MutableLiveData()
-    private val nextAlarmData: MutableLiveData<NextAlarmItem?> = MutableLiveData()
-    private val itemEditedData: MutableLiveData<AlarmItem> = MutableLiveData()
+    private val alarmListData = MutableLiveData<List<AlarmItem>>()
+    private val statusData = MutableLiveData<AlarmStatus>(AlarmStatus.Idle)
+    private val itemEditedData = MutableLiveData<AlarmItem>()
+
+    init {
+        control.alarmListFlow.onEach { newList ->
+            alarmListData.value = newList
+        }.launchIn(viewModelScope)
+    }
 
     fun addAlarm(item: AlarmItem) {
         viewModelScope.launch { control.addItem(item) }

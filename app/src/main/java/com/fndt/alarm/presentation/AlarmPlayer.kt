@@ -40,9 +40,9 @@ class AlarmPlayer @Inject constructor(private val context: Context) {
 
     private fun Vibrator.vibrateSDK(pattern: LongArray, repeat: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            this.vibrate(VibrationEffect.createWaveform(pattern, 0))
+            vibrate(VibrationEffect.createWaveform(pattern, 0))
         } else {
-            this.vibrate(pattern, 0)
+            vibrate(pattern, 0)
         }
     }
 }

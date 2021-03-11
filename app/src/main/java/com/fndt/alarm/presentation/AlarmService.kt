@@ -4,18 +4,20 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import com.fndt.alarm.domain.WakeLockUseCase
+import com.fndt.alarm.domain.WakelockProvider
 import com.fndt.alarm.domain.dto.AlarmItem
 import com.fndt.alarm.domain.utils.INTENT_FIRE_ALARM
 import com.fndt.alarm.domain.utils.INTENT_STOP_ALARM
 import com.fndt.alarm.presentation.NotificationProvider.Companion.NOTIFICATION_ID
 import com.fndt.alarm.presentation.util.getAlarmItem
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 class AlarmService : Service() {
 
     @Inject
-    lateinit var wakeLockUseCase: WakeLockUseCase
+    lateinit var wakeLockProvider: WakelockProvider
 
     @Inject
     lateinit var player: AlarmPlayer
@@ -46,7 +48,7 @@ class AlarmService : Service() {
 
     private fun alarm(alarmItem: AlarmItem) {
         Log.d("AlarmService", "Event ${alarmItem.id}")
-        wakeLockUseCase.acquireWakeLock()
+        wakeLockProvider.acquireServiceLock()
         if (!isForegroundService) {
             isForegroundService = true
             startForeground(NOTIFICATION_ID, notify(alarmItem))
@@ -55,7 +57,7 @@ class AlarmService : Service() {
     }
 
     private fun stop(alarmItem: AlarmItem) {
-        wakeLockUseCase.releaseWakeLock()
+        wakeLockProvider.releaseServiceLock()
         isForegroundService = false
         Log.d("AlarmService", "Stop ${alarmItem.id}")
         stopForeground(true)

@@ -7,8 +7,10 @@ import android.util.Log
 import com.fndt.alarm.domain.AlarmEventHandler
 import com.fndt.alarm.domain.dto.AlarmIntent
 import com.fndt.alarm.presentation.util.getAlarmItem
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
+@ExperimentalCoroutinesApi
 class AlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var eventHandler: AlarmEventHandler
